@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <script src="js/p5.min.js"></script>
+    <script src="js/bezier.js"></script>
+    <link rel="stylesheet" href="css/styles.css" />
+    <title>Bézier Curve</title>
+  </head>
 
-<head>
-  <meta charset="utf-8" />
-  <script src="js/p5.min.js"></script>
-  <script src="js/bezier.js"></script>
-  <link rel="stylesheet" href="css/styles.css">
-  <title>Bézier Curve</title>
-</head>
-
-<body>
-  <main>
-    <h1>Bézier Curve</h1>
-    <div id="canvas-container" class="container"></div>
-    <div id="control-container" class="container">
-    <input id="slider" type="range" min="0" max="1" step="0.01" value="0">
-    <button id="btn_add">ADD</button>
-    <button id="btn_del">DEL</button>
-    </div>
-  </main>
-</body>
-
+  <body>
+    <main>
+      <h1>Bézier Curve</h1>
+      <div id="canvas-container" class="container"></div>
+      <div id="control-container" class="container">
+        <input
+          id="slider_t_value"
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          value="0"
+        />
+        <button id="button_add">ADD</button>
+        <button id="button_del">DEL</button>
+      </div>
+    </main>
+  </body>
 </html>

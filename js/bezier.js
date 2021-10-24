@@ -1,50 +1,50 @@
-const points = [];
+const POINTS = [];
+const COLORS = [];
+const CANVAS_WIDTH = 600;
+const CANVAS_HEIGHT = 400;
+const POINT_RADIUS = 10;
+
 let total = 4;
 let mover = null;
 let slider = null;
-const cols = [];
 let curveP = [];
 let addingPoint = false;
 let found = false;
 
 function setup() {
-  let myCanvas = createCanvas(600, 400);
+  let myCanvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
   myCanvas.parent('canvas-container');
-  points.push(createVector(100, 100));
-  points.push(createVector(300, 100));
-  points.push(createVector(300, 300));
-  points.push(createVector(100, 300));
+  POINTS.push(createVector(100, 100));
+  POINTS.push(createVector(300, 100));
+  POINTS.push(createVector(300, 300));
+  POINTS.push(createVector(100, 300));
+  
+  slider = select('#slider_t_value');
 
-  slider = select('#slider');
-  select('#btn_add').mousePressed(() => {
+  select('#button_add').mousePressed(() => {
     addingPoint = true;
   });
-  select('#btn_del').mousePressed(() => {
+  select('#button_del').mousePressed(() => {
     if (total > 2) {
       total--
       console.log("total = " + total);
-      points.pop();
+      POINTS.pop();
       curveP.splice(0);
     }
   });
 
-  cols.push(color(0, 165, 255));
-  cols.push(color(0, 255, 0));
-  cols.push(color(255, 0, 0));
-  cols.push(color(255, 165, 0));
-  cols.push(color(255));
 }
 
 function mousePressed() {
   if (addingPoint) {
-    if (mouseX <= 400 && mouseY <= 400) {
+    if (mouseX <= CANVAS_WIDTH && mouseY <= CANVAS_HEIGHT) {
       total++;
-      points.push(createVector(mouseX, mouseY));
+      POINTS.push(createVector(mouseX, mouseY));
       addingPoint = false;
       curveP.splice(0);
     }
   } else {
-    for (const p of points) {
+    for (const p of POINTS) {
       const d = dist(p.x, p.y, mouseX, mouseY);
       if (d < 6) {
         mover = p;
@@ -76,23 +76,23 @@ function mouseReleased() {
 }
 
 function draw() {
-  background(220);
+  background('linen');
 
-  for (const p of points) {
+  for (const p of POINTS) {
     stroke(0);
     fill(0);
-    circle(p.x, p.y, 12);
+    circle(p.x, p.y, POINT_RADIUS);
   }
 
   stroke(0);
   noFill();
   beginShape();
-  for (const p of points) {
+  for (const p of POINTS) {
     vertex(p.x, p.y);
   }
   endShape();
 
-  let current = points;
+  let current = POINTS;
   for (let i = 0; i < total - 1; i++) {
     const vs = [];
 
@@ -101,12 +101,12 @@ function draw() {
     }
 
     for (const v of vs) {
-      stroke(cols[i]);
-      fill(cols[i]);
-      circle(v.x, v.y, 12);
+      stroke(0);
+      fill(0);
+      circle(v.x, v.y, POINT_RADIUS);
     }
 
-    stroke(cols[i]);
+    stroke(0);
     noFill();
     beginShape();
     for (const v of vs) {
@@ -121,7 +121,7 @@ function draw() {
     }
   }
 
-  stroke(cols[total - 2]);
+  stroke(0);
   noFill();
   beginShape();
   for (const p of curveP) {
