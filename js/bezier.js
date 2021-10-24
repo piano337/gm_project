@@ -2,7 +2,8 @@ const POINTS = [];
 const COLORS = [];
 const CANVAS_WIDTH = 600;
 const CANVAS_HEIGHT = 400;
-const POINT_RADIUS = 10;
+const POINT_RADIUS = 5;
+const POINT_DIAMETER = 2*POINT_RADIUS;
 
 let total = 0;
 let mover = null;
@@ -11,8 +12,9 @@ let curveP = [];
 let addingPoint = false;
 let found = false;
 
+// Function to add a single point with coordinates (x,y) to the POINTS-list and
+// calculating a new color based only on the hue value as defined in the HSB color model.
 let color_hue = 0
-
 function addPoint(x, y){
   if (x <= CANVAS_WIDTH && y <= CANVAS_HEIGHT) {
     total++;
@@ -22,14 +24,21 @@ function addPoint(x, y){
     color_hue += 20
     console.log(color_hue);
     colorMode(RGB);
-  } 
+  }
 }
 
+function clearBezierCurve(){
+  curveP.splice(0);
+  slider.value('0');
+}
+
+
+// Setting up the 
 function setup() {
   let myCanvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
   myCanvas.parent('canvas-container');
-  addPoint(100, 100);
-  addPoint(300, 100);
+  addPoint(100, 130);
+  addPoint(230, 120);
   addPoint(300, 300);
   addPoint(100, 300);
   
@@ -42,7 +51,7 @@ function setup() {
     if (total > 2) {
       total--
       POINTS.pop();
-      curveP.splice(0);
+      clearBezierCurve();
     }
   });
 
@@ -53,18 +62,18 @@ function mousePressed() {
     if (mouseX <= CANVAS_WIDTH && mouseY <= CANVAS_HEIGHT) {
       addPoint(mouseX, mouseY);
       addingPoint = false;
-      curveP.splice(0);
+      clearBezierCurve();
     }
   } else {
     for (const p of POINTS) {
       const d = dist(p.x, p.y, mouseX, mouseY);
-      if (d < 6) {
+      if (d < POINT_RADIUS) {
         mover = p;
         found = true;
       }
     }
     if (found) {
-      curveP.splice(0);
+      clearBezierCurve();
     }
   }
 }
@@ -75,7 +84,7 @@ function mouseDragged() {
       mover.set(mouseX, mouseY);
     }
     if (found) {
-      curveP.splice(0);
+      clearBezierCurve();
     }
   }
 }
@@ -93,7 +102,7 @@ function draw() {
   for (const p of POINTS) {
     stroke(0);
     fill(0);
-    circle(p.x, p.y, POINT_RADIUS);
+    circle(p.x, p.y, POINT_DIAMETER);
   }
 
   stroke(0);
@@ -115,7 +124,7 @@ function draw() {
     for (const v of vs) {
       stroke(COLORS[i]);
       fill(COLORS[i]);
-      circle(v.x, v.y, POINT_RADIUS);
+      circle(v.x, v.y, POINT_DIAMETER);
     }
 
     stroke(COLORS[i]);
@@ -133,7 +142,8 @@ function draw() {
     }
   }
 
-  stroke(COLORS[total - 2]);
+  // Final Bézier curve
+  stroke(0);
   noFill();
   beginShape();
   for (const p of curveP) {
