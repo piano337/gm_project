@@ -4,10 +4,14 @@ const CANVAS_WIDTH = 600;
 const CANVAS_HEIGHT = 400;
 const POINT_RADIUS = 5;
 const POINT_DIAMETER = 2*POINT_RADIUS;
+const STROKE_WEIGHT_BEZIER_CURVE = 2;
+const STROKE_WEIGHT_HELPER_LINES = 1;
+const COLOR_BEZIER_CURVE = 'black';
 
 let total = 0;
 let mover = null;
 let slider = null;
+let btn_add = null;
 let curveP = [];
 let addingPoint = false;
 let found = false;
@@ -33,19 +37,21 @@ function clearBezierCurve(){
 }
 
 
-// Setting up the 
+// Setting up the canvas, the buttons and the slider.
 function setup() {
   let myCanvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
   myCanvas.parent('canvas-container');
   addPoint(100, 130);
   addPoint(230, 120);
   addPoint(300, 300);
-  addPoint(100, 300);
+  addPoint(530, 320);
   
   slider = select('#slider_t_value');
 
-  select('#button_add').mousePressed(() => {
+  btn_add = select('#button_add');
+  btn_add.mousePressed(() => {
     addingPoint = true;
+    btn_add.style('background-color', '#999');
   });
   select('#button_del').mousePressed(() => {
     if (total > 2) {
@@ -57,12 +63,16 @@ function setup() {
 
 }
 
+// Catching mouse pressed events:
+// If "ADD" button was pressed before, set a new point and clear the Bézier curve,
+// else go for moving a point, i.e. mouse drag event.
 function mousePressed() {
   if (addingPoint) {
     if (mouseX <= CANVAS_WIDTH && mouseY <= CANVAS_HEIGHT) {
       addPoint(mouseX, mouseY);
       addingPoint = false;
       clearBezierCurve();
+      btn_add.removeAttribute('style');
     }
   } else {
     for (const p of POINTS) {
@@ -70,6 +80,7 @@ function mousePressed() {
       if (d < POINT_RADIUS) {
         mover = p;
         found = true;
+        break;
       }
     }
     if (found) {
@@ -142,12 +153,14 @@ function draw() {
     }
   }
 
-  // Final Bézier curve
-  stroke(0);
+  // Draw Bézier curve
+  stroke(COLOR_BEZIER_CURVE);
+  strokeWeight(STROKE_WEIGHT_BEZIER_CURVE);
   noFill();
   beginShape();
   for (const p of curveP) {
     vertex(p.x, p.y);
   }
   endShape();
+  strokeWeight(STROKE_WEIGHT_HELPER_LINES);
 }
