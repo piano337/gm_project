@@ -6,7 +6,11 @@ const POINT_RADIUS = 5;
 const POINT_DIAMETER = 2*POINT_RADIUS;
 const STROKE_WEIGHT_BEZIER_CURVE = 2;
 const STROKE_WEIGHT_HELPER_LINES = 1;
-const COLOR_BEZIER_CURVE = 'black';
+
+// Color constants
+const COLOR_BEZIER_CURVE = 0; // 0 means 'black'
+const COLOR_CANVAS = 'linen';
+const COLOR_POINTS = 0; // 0 means 'black'
 
 // GUI-elements
 let slider = null;
@@ -53,12 +57,10 @@ function setup() {
   slider = select('#slider_t_value');
   slider.input(() => {
     output_t.html('t = ' + slider.value().toLocaleString(
-      undefined, // leave undefined to use the visitor's browser 
-                 // locale or a string like 'en-US' to override it.
+      undefined, // leave undefined to use the visitor's browser locale or a string like 'en-US' to override it.
       { minimumFractionDigits: 2 }
     ));
   })
-
 
   btn_add = select('#button_add');
   btn_add.mousePressed(() => {
@@ -73,7 +75,6 @@ function setup() {
       clearBezierCurve();
     }
   });
-
 }
 
 // Catching mouse pressed events:
@@ -122,16 +123,21 @@ function mouseReleased() {
 }
 
 // Drawing function
+// TODO:
+// - Separate the logic from the view: separate the calculation of the Bézier curve from the visualization of it!
+// - Creating the Bernstein polynomials with CindyJS or with p5.js.
 function draw() {
-  background('linen');
+  background(COLOR_CANVAS);
 
+  // Draw points
   for (const p of POINTS) {
-    stroke(0);
-    fill(0);
+    stroke(COLOR_POINTS);
+    fill(COLOR_POINTS);
     circle(p.x, p.y, POINT_DIAMETER);
   }
 
-  stroke(0);
+  // Draw lines between the control points
+  stroke(COLOR_BEZIER_CURVE);
   noFill();
   beginShape();
   for (const p of POINTS) {
@@ -144,15 +150,17 @@ function draw() {
     const vs = [];
 
     for (let j = 0; j < current.length - 1; j++) {
-      vs.push(p5.Vector.lerp(current[j], current[j + 1], slider.value()));
+      vs.push(p5.Vector.lerp(current[j], current[j + 1], slider.value())); // TODO: Write De Casteljau's algorithm!
     }
 
+    // Draw helper points
     for (const v of vs) {
       stroke(COLORS[i]);
       fill(COLORS[i]);
-      circle(v.x, v.y, POINT_DIAMETER);
+      circle(v.x, v.y, POINT_RADIUS);
     }
 
+    // Draw helper lines
     stroke(COLORS[i]);
     noFill();
     beginShape();
@@ -161,8 +169,8 @@ function draw() {
     }
     endShape();
 
-    current = vs;
 
+    current = vs;
     if (i >= number_of_points - 2) {
       bezier_curve.push(current[0]);
     }
@@ -178,4 +186,5 @@ function draw() {
   }
   endShape();
   strokeWeight(STROKE_WEIGHT_HELPER_LINES);
+
 }
