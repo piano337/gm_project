@@ -136,7 +136,7 @@ function draw() {
     circle(p.x, p.y, POINT_DIAMETER);
   }
 
-  // Draw lines between the control points
+  // Draw lines between the control points (control polygon)
   stroke(COLOR_BEZIER_CURVE);
   noFill();
   beginShape();
