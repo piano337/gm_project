@@ -4,20 +4,34 @@ const CANVAS_WIDTH = 600;
 const CANVAS_HEIGHT = 400;
 const POINT_RADIUS = 10;
 
-let total = 4;
+let total = 0;
 let mover = null;
 let slider = null;
 let curveP = [];
 let addingPoint = false;
 let found = false;
 
+let color_hue = 0
+
+function addPoint(x, y){
+  if (x <= CANVAS_WIDTH && y <= CANVAS_HEIGHT) {
+    total++;
+    POINTS.push(createVector(x, y));
+    colorMode(HSB);
+    COLORS.push(color(color_hue % 360, 100, 100));
+    color_hue += 20
+    console.log(color_hue);
+    colorMode(RGB);
+  } 
+}
+
 function setup() {
   let myCanvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
   myCanvas.parent('canvas-container');
-  POINTS.push(createVector(100, 100));
-  POINTS.push(createVector(300, 100));
-  POINTS.push(createVector(300, 300));
-  POINTS.push(createVector(100, 300));
+  addPoint(100, 100);
+  addPoint(300, 100);
+  addPoint(300, 300);
+  addPoint(100, 300);
   
   slider = select('#slider_t_value');
 
@@ -27,7 +41,6 @@ function setup() {
   select('#button_del').mousePressed(() => {
     if (total > 2) {
       total--
-      console.log("total = " + total);
       POINTS.pop();
       curveP.splice(0);
     }
@@ -38,8 +51,7 @@ function setup() {
 function mousePressed() {
   if (addingPoint) {
     if (mouseX <= CANVAS_WIDTH && mouseY <= CANVAS_HEIGHT) {
-      total++;
-      POINTS.push(createVector(mouseX, mouseY));
+      addPoint(mouseX, mouseY);
       addingPoint = false;
       curveP.splice(0);
     }
@@ -101,12 +113,12 @@ function draw() {
     }
 
     for (const v of vs) {
-      stroke(0);
-      fill(0);
+      stroke(COLORS[i]);
+      fill(COLORS[i]);
       circle(v.x, v.y, POINT_RADIUS);
     }
 
-    stroke(0);
+    stroke(COLORS[i]);
     noFill();
     beginShape();
     for (const v of vs) {
@@ -121,7 +133,7 @@ function draw() {
     }
   }
 
-  stroke(0);
+  stroke(COLORS[total - 2]);
   noFill();
   beginShape();
   for (const p of curveP) {
