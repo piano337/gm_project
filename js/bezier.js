@@ -8,31 +8,33 @@ const STROKE_WEIGHT_BEZIER_CURVE = 2;
 const STROKE_WEIGHT_HELPER_LINES = 1;
 const COLOR_BEZIER_CURVE = 'black';
 
-let total = 0;
-let mover = null;
+// GUI-elements
 let slider = null;
 let btn_add = null;
-let curveP = [];
-let addingPoint = false;
-let found = false;
+let output_t = null;
+
+let number_of_points = 0;
+let point_to_move = null;
+let bezier_curve = [];
+let bool_adding = false;
+let bool_found = false;
 
 // Function to add a single point with coordinates (x,y) to the POINTS-list and
 // calculating a new color based only on the hue value as defined in the HSB color model.
 let color_hue = 0
 function addPoint(x, y){
   if (x <= CANVAS_WIDTH && y <= CANVAS_HEIGHT) {
-    total++;
+    number_of_points++;
     POINTS.push(createVector(x, y));
     colorMode(HSB);
     COLORS.push(color(color_hue % 360, 100, 100));
     color_hue += 20
-    console.log(color_hue);
     colorMode(RGB);
   }
 }
 
 function clearBezierCurve(){
-  curveP.splice(0);
+  bezier_curve.splice(0);
   slider.value('0');
 }
 
@@ -46,16 +48,27 @@ function setup() {
   addPoint(300, 300);
   addPoint(530, 320);
   
+  output_t = select('#t_value');
+
   slider = select('#slider_t_value');
+  slider.input(() => {
+    output_t.html('t = ' + slider.value().toLocaleString(
+      undefined, // leave undefined to use the visitor's browser 
+                 // locale or a string like 'en-US' to override it.
+      { minimumFractionDigits: 2 }
+    ));
+  })
+
 
   btn_add = select('#button_add');
   btn_add.mousePressed(() => {
-    addingPoint = true;
+    bool_adding = true;
     btn_add.style('background-color', '#999');
   });
+
   select('#button_del').mousePressed(() => {
-    if (total > 2) {
-      total--
+    if (number_of_points > 2) {
+      number_of_points--
       POINTS.pop();
       clearBezierCurve();
     }
@@ -67,10 +80,10 @@ function setup() {
 // If "ADD" button was pressed before, set a new point and clear the Bézier curve,
 // else go for moving a point, i.e. mouse drag event.
 function mousePressed() {
-  if (addingPoint) {
+  if (bool_adding) {
     if (mouseX <= CANVAS_WIDTH && mouseY <= CANVAS_HEIGHT) {
       addPoint(mouseX, mouseY);
-      addingPoint = false;
+      bool_adding = false;
       clearBezierCurve();
       btn_add.removeAttribute('style');
     }
@@ -78,35 +91,37 @@ function mousePressed() {
     for (const p of POINTS) {
       const d = dist(p.x, p.y, mouseX, mouseY);
       if (d < POINT_RADIUS) {
-        mover = p;
-        found = true;
+        point_to_move = p;
+        bool_found = true;
         break;
       }
     }
-    if (found) {
+    if (bool_found) {
       clearBezierCurve();
     }
   }
 }
 
+// If we are not adding a point, we maybe dragging a point to move it... :)
 function mouseDragged() {
-  if (!addingPoint) {
-    if (mover) {
-      mover.set(mouseX, mouseY);
+  if (!bool_adding) {
+    if (point_to_move) {
+      point_to_move.set(mouseX, mouseY);
     }
-    if (found) {
+    if (bool_found) {
       clearBezierCurve();
     }
   }
 }
 
 function mouseReleased() {
-  if (!addingPoint) {
-    mover = null;
-    found = false;
+  if (!bool_adding) {
+    point_to_move = null;
+    bool_found = false;
   }
 }
 
+// Drawing function
 function draw() {
   background('linen');
 
@@ -125,7 +140,7 @@ function draw() {
   endShape();
 
   let current = POINTS;
-  for (let i = 0; i < total - 1; i++) {
+  for (let i = 0; i < number_of_points - 1; i++) {
     const vs = [];
 
     for (let j = 0; j < current.length - 1; j++) {
@@ -148,8 +163,8 @@ function draw() {
 
     current = vs;
 
-    if (i >= total - 2) {
-      curveP.push(current[0]);
+    if (i >= number_of_points - 2) {
+      bezier_curve.push(current[0]);
     }
   }
 
@@ -158,7 +173,7 @@ function draw() {
   strokeWeight(STROKE_WEIGHT_BEZIER_CURVE);
   noFill();
   beginShape();
-  for (const p of curveP) {
+  for (const p of bezier_curve) {
     vertex(p.x, p.y);
   }
   endShape();
