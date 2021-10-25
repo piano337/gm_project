@@ -3,14 +3,14 @@ const COLORS = [];
 const CANVAS_WIDTH = 600;
 const CANVAS_HEIGHT = 400;
 const POINT_RADIUS = 5;
-const POINT_DIAMETER = 2*POINT_RADIUS;
+const POINT_DIAMETER = 2 * POINT_RADIUS;
 const STROKE_WEIGHT_BEZIER_CURVE = 2;
 const STROKE_WEIGHT_HELPER_LINES = 1;
 
 // Color constants
 const COLOR_BEZIER_CURVE = 0; // 0 means 'black'
 const COLOR_CANVAS = 'linen';
-const COLOR_POINTS = 0; // 0 means 'black'
+const COLOR_POINTS = '#696969'; // 0 means 'black'
 
 // GUI-elements
 let slider = null;
@@ -26,7 +26,7 @@ let bool_found = false;
 // Function to add a single point with coordinates (x,y) to the POINTS-list and
 // calculating a new color based only on the hue value as defined in the HSB color model.
 let color_hue = 0
-function addPoint(x, y){
+function addPoint(x, y) {
   if (x <= CANVAS_WIDTH && y <= CANVAS_HEIGHT) {
     number_of_points++;
     POINTS.push(createVector(x, y));
@@ -37,7 +37,7 @@ function addPoint(x, y){
   }
 }
 
-function clearBezierCurve(){
+function clearBezierCurve() {
   bezier_curve.splice(0);
   slider.value('0');
 }
@@ -51,7 +51,7 @@ function setup() {
   addPoint(230, 120);
   addPoint(300, 300);
   addPoint(530, 320);
-  
+
   output_t = select('#t_value');
 
   slider = select('#slider_t_value');
@@ -75,6 +75,7 @@ function setup() {
       clearBezierCurve();
     }
   });
+  noLoop();
 }
 
 // Catching mouse pressed events:
@@ -101,6 +102,7 @@ function mousePressed() {
       clearBezierCurve();
     }
   }
+  redraw();
 }
 
 // If we are not adding a point, we maybe dragging a point to move it... :)
@@ -113,6 +115,7 @@ function mouseDragged() {
       clearBezierCurve();
     }
   }
+  redraw();
 }
 
 function mouseReleased() {
@@ -120,6 +123,7 @@ function mouseReleased() {
     point_to_move = null;
     bool_found = false;
   }
+  redraw();
 }
 
 // Drawing function
@@ -155,9 +159,19 @@ function draw() {
 
     // Draw helper points
     for (const v of vs) {
-      stroke(COLORS[i]);
-      fill(COLORS[i]);
-      circle(v.x, v.y, POINT_RADIUS);
+
+      // Draw point on Bézier curve black...
+      if (i == number_of_points - 2) {
+        stroke(COLOR_BEZIER_CURVE);
+        fill(COLOR_BEZIER_CURVE);
+        circle(v.x, v.y, POINT_DIAMETER);
+      }
+      // ... else draw smaller points as helper points
+      else {
+        stroke(COLORS[i]);
+        fill(COLORS[i]);
+        circle(v.x, v.y, POINT_RADIUS);
+      }
     }
 
     // Draw helper lines
