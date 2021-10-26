@@ -1,11 +1,12 @@
 const CANVAS_SIZE = 500;
-const GRID_SIZE = CANVAS_SIZE/10;
+const GRID_SIZE = CANVAS_SIZE / 4;
 const NUMBER_OF_STEPS = 100;
 
 function pascalsTriangle(n) {
   let line = [1];
-  for (let k = 0; k < n; k++)
+  for (let k = 0; k < n; k++) {
     line.push(line[k] * (n - k) / (k + 1));
+  }
   return line;
 }
 
@@ -24,7 +25,7 @@ function draw() {
 }
 
 function graphAxis() {
-  
+
   stroke(0);
   strokeWeight(5);
 
@@ -48,18 +49,54 @@ function graphAxis() {
 }
 
 function functionPlot() {
-  translate(0, height)
-  strokeWeight(2)
-  noFill()
-  stroke(0, 0, 255)
+  translate(0, height);
+  strokeWeight(2);
+  noFill();
+  stroke('blue');
   beginShape();
-  vertex(0, 0)
-  for (let i = 1; i <= NUMBER_OF_STEPS; i++) {
+  let n = 2
+  for (let i = 0; i <= NUMBER_OF_STEPS; i++) {
     // let x = i * (width / NUMBER_OF_STEPS);
-    let x = i * (width / NUMBER_OF_STEPS);
-    let f_x = x * x;
-    let y = (-1) * f_x * (1 / NUMBER_OF_STEPS);
+    let x = i * (CANVAS_SIZE / NUMBER_OF_STEPS);
+    let f_x = 3 * x * Math.pow(CANVAS_SIZE - x, n);
+    let y = (-1) * f_x * (1 / Math.pow(CANVAS_SIZE, n));
     vertex(x, y);
   }
-  endShape()
+  endShape();
+
+  noFill();
+  stroke('red');
+  beginShape();
+  for (let i = 0; i <= NUMBER_OF_STEPS; i++) {
+    // let x = i * (width / NUMBER_OF_STEPS);
+    let x = i * (CANVAS_SIZE / NUMBER_OF_STEPS);
+    let f_x = 3 * Math.pow(x, n) * (CANVAS_SIZE - x);
+    let y = (-1) * f_x * (1 / Math.pow(CANVAS_SIZE, n));
+    vertex(x, y);
+  }
+  endShape();
+
+  noFill();
+  stroke('green');
+  beginShape();
+  for (let i = 0; i <= NUMBER_OF_STEPS; i++) {
+    // let x = i * (width / NUMBER_OF_STEPS);
+    let x = i * (CANVAS_SIZE / NUMBER_OF_STEPS);
+    let f_x = Math.pow(x, n);
+    let y = (-1) * f_x * (1 / Math.pow(CANVAS_SIZE, n-1));
+    vertex(x, y);
+  }
+  endShape();
+
+  noFill();
+  stroke('black');
+  beginShape();
+  for (let i = 0; i <= NUMBER_OF_STEPS; i++) {
+    // let x = i * (width / NUMBER_OF_STEPS);
+    let x = i * (CANVAS_SIZE / NUMBER_OF_STEPS);
+    let f_x = Math.pow((CANVAS_SIZE - x), n)
+    let y = (-1) * f_x * (1 / Math.pow(CANVAS_SIZE, n-1));
+    vertex(x, y);
+  }
+  endShape();
 }
