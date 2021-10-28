@@ -4,6 +4,7 @@ const NUMBER_OF_STEPS = 100;
 const COLORS = [];
 
 let binomial_coefficients;
+let number_of_points;
 
 let color_hue = 0
 function addPoint() {
@@ -30,20 +31,27 @@ function setup() {
   slider.input(() => {
     output_t.html('t = ' + slider.value().toLocaleString(
       undefined, // leave undefined to use the visitor's browser locale or a string like 'en-US' to override it.
-      { minimumFractionDigits: 2 }
+      // { minimumFractionDigits: 2 }
     ));
+    redraw();
   });
+  num_of_points = select('#nr_of_points');
+  num_of_points.input(() => {
+    number_of_points = num_of_points.value() - 1;
+    binomial_coefficients = pascalsTriangle(number_of_points);
+    redraw();
+  });
+
+  number_of_points = num_of_points.value() - 1;
+  binomial_coefficients = pascalsTriangle(number_of_points);
   noLoop();
 }
 
 function draw() {
   background('linen');
   graphGrid();
-  n = 5;
-  for(let i = 0; i <= n; i++) addPoint();
-  
-  binomial_coefficients = pascalsTriangle(n);
-  functionPlot(n);
+  for(let i = 0; i <= number_of_points; i++) addPoint();
+  functionPlot(number_of_points);
   graphAxis();
 }
 
