@@ -101,29 +101,23 @@ function draw(){
 		circle(p.x, p.y, 15);
 	}
 	//Draw Helper Points
-	for (const p of helper_points) {
-		stroke(COLOR_POINTS);
-		fill(123);
-		circle(p.x, p.y, 15);
+	for (const h of helper_points) {
+		for(const p of h){
+			stroke(COLOR_POINTS);
+			fill(123);
+			circle(p.x, p.y, 15);
+		}
 	}
 	//Draw Helper Lines
-	n = POINTS.length
-	if (helper_points.length > 1){
-		row = n-1;
-		j = row;	
-		for (var i = 0; i < helper_points.length; i++){
-			if (j != 0 ){
+	for (const h of helper_points) {
+		for(i = 0; i < POINTS.length; i++){
+			if (i!=POINTS.length){
 				stroke(COLOR_BEZIER_CURVE);
 				noFill();
 				beginShape();
-				line(helper_points[i].x, helper_points[i].y,helper_points[i+1].x, helper_points[i+1].y);
+				//line(h[i].x,h[i].y,h[i+1].x,h[i+1].y);
 				endShape();
-				j--
-			} else{
-				row--
-				j=row;			
 			}
-				
 		}
 	}
 	//Draw Polygon lines
@@ -160,14 +154,18 @@ function casteljauAlgorithm(t){
 	n = POINTS.length
 	newPoints = POINTS.slice()
 	deleteHelperPoints()
+	let row = []
 	for (var r = 1; r <n; r++){
-		
+		for (let i = helper_points.length; i > 0; i--) {
+  			row.pop();
+		}
 		for(var j = 0; j< n-r; j++){
 			//Need to create a new Vector Object
 			newPoints[j] = createVector(newPoints[j].x * (1-t) + t * newPoints[j+1].x,newPoints[j].y*(1-t) + t*newPoints[j+1].y )
 			helperPoint = newPoints[j]
-			helper_points.push(helperPoint)
-		}	
+			row.push(helperPoint)
+		}
+		helper_points.push(row.slice())	
 	}
 	//Printing b_0^n i.e the point which traces the B-Curve
 	return newPoints[0]
