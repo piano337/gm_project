@@ -242,7 +242,7 @@ let bezier_sketch = function (p) {
     p.strokeWeight(STROKE_WEIGHT_BEZIER_CURVE);
     p.noFill();
     p.beginShape();
-    for (let i = 0; i <= slider.value(); i++) {
+    for (let i = 0; i < slider.value(); i++) {
       let point = bezier_curve[i];
       p.vertex(point.x, point.y);
     }
