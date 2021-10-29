@@ -4,6 +4,12 @@
 
 const POINTS = [];
 const COLORS = [];
+const CANVAS_WIDTH = 600;
+const CANVAS_HEIGHT = 400;
+const POINT_RADIUS = 5;
+const POINT_DIAMETER = 2 * POINT_RADIUS;
+const STROKE_WEIGHT_BEZIER_CURVE = 2;
+const STROKE_WEIGHT_HELPER_LINES = 1;
 
 const COLOR_BEZIER_CURVE = 0; // 0 means 'black'
 const COLOR_CANVAS = 'linen';
@@ -14,15 +20,23 @@ let helper_points = [];
 let add_boolean = false;
 let param_t = 0;
 
-function addControlPoint(x,y){
-
-    POINTS.push(createVector(x, y));
+// Function to add a single point with coordinates (x,y) to the POINTS-list and
+// calculating a new color based only on the hue value as defined in the HSB color model.
+let color_hue = 0
+function addControlPoint(x, y) {
+	if (x < CANVAS_WIDTH && y < CANVAS_HEIGHT) {
+		POINTS.push(createVector(x, y));
+		colorMode(HSB);
+		COLORS.push(color(color_hue % 360, 100, 100));
+		color_hue += 20
+		colorMode(RGB);
+	}
 }
 
 function setup() {
 
 	//Setting up Canvas
-	let myCanvas = createCanvas(600, 400);
+	let myCanvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
 	myCanvas.parent('canvas-container');
   
 	//Setting up points	
@@ -62,18 +76,18 @@ function setup() {
 //Mouse Pressed Events
 function mousePressed(){
 	if (add_boolean){ //ADD new control point
-		if(mouseX < 600 && mouseY < 400){
+		if(mouseX < CANVAS_WIDTH && mouseY < CANVAS_HEIGHT){
 			deleteHelperPoints()
 			addControlPoint(mouseX,mouseY);
 			add_boolean = false;
 		}
-			
+
 	}
 	else{
 		for (const p of POINTS){ //Moving points
 			deleteHelperPoints()
 			d = dist(p.x,p.y,mouseX,mouseY)
-			if (d < 15){ //15 point radius
+			if (d < POINT_RADIUS){ //15 point radius
 				point_to_move = p;		
 			}	
 		}
@@ -82,7 +96,7 @@ function mousePressed(){
 }
 //Moving stuff
 function mouseDragged(){
-	if(mouseX < 600 && mouseY < 400){
+	if(mouseX < CANVAS_WIDTH && mouseY < CANVAS_HEIGHT){
 		deleteHelperPoints()
 		point_to_move.set(mouseX,mouseY);
 	}
@@ -90,22 +104,22 @@ function mouseDragged(){
 }
 
 function draw(){
-	
-	
+
+
 	
 	background(COLOR_CANVAS);
 	// Draw points
 	for (const p of POINTS) {
 		stroke(COLOR_POINTS);
 		fill(COLOR_POINTS);
-		circle(p.x, p.y, 15);
+		circle(p.x, p.y, POINT_DIAMETER);
 	}
 	//Draw Helper Points
 	for (const h of helper_points) {
 		for(const p of h){
 			stroke(COLOR_POINTS);
 			fill(123);
-			circle(p.x, p.y, 15);
+			circle(p.x, p.y, POINT_DIAMETER);
 		}
 	}
 	//Draw Helper Lines
