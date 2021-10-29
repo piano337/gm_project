@@ -46,7 +46,7 @@ function clearBezierCurve() {
 // Setting up the canvas, the buttons and the slider.
 function setup() {
   let myCanvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-  myCanvas.parent("canvas-container");
+  myCanvas.parent("bezier-canvas-container");
   addPoint(100, 130);
   addPoint(230, 120);
   addPoint(300, 300);
@@ -58,10 +58,10 @@ function setup() {
   slider.input(() => {
     output_t.html(
       "t = " +
-        slider.value().toLocaleString(
-          undefined, // leave undefined to use the visitor's browser locale or a string like 'en-US' to override it.
-          { minimumFractionDigits: 2 }
-        )
+      slider.value().toLocaleString(
+        undefined, // leave undefined to use the visitor's browser locale or a string like 'en-US' to override it.
+        { minimumFractionDigits: 2 }
+      )
     );
   });
 
@@ -178,22 +178,25 @@ function draw() {
   }
   endShape();
 
-  let current = POINTS;
+  let current_points = POINTS;
   for (let i = 0; i < number_of_points - 1; i++) {
-    const vs = [];
+    const helper_points = [];
 
-    for (let j = 0; j < current.length - 1; j++) {
+    for (let j = 0; j < current_points.length - 1; j++) {
       t = slider.value();
       // Linear interpolation
       vec = createVector(
-        current[j].x * (1 - t) + t * current[j + 1].x,
-        current[j].y * (1 - t) + t * current[j + 1].y
+        current_points[j].x * (1 - t) + t * current_points[j + 1].x,
+        current_points[j].y * (1 - t) + t * current_points[j + 1].y
       );
-      vs.push(vec);
+      helper_points.push(vec);
     }
 
+    current_points = helper_points;
+
+
     // Draw helper points
-    for (const v of vs) {
+    for (const v of helper_points) {
       // Draw point on Bézier curve...
       if (i == number_of_points - 2) {
         stroke(COLOR_BEZIER_CURVE);
@@ -212,7 +215,7 @@ function draw() {
     stroke(COLORS[i]);
     noFill();
     beginShape();
-    for (const v of vs) {
+    for (const v of helper_points) {
       vertex(v.x, v.y);
     }
     endShape();
@@ -223,7 +226,7 @@ function draw() {
   strokeWeight(STROKE_WEIGHT_BEZIER_CURVE);
   noFill();
   beginShape();
-  current_t = Math.floor(slider.value()*NUMBER_OF_STEPS);
+  current_t = Math.floor(slider.value() * NUMBER_OF_STEPS);
   for (let i = 0; i <= current_t; i++) {
     let p = bezier_curve[i];
     vertex(p.x, p.y);
