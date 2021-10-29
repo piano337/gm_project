@@ -25,6 +25,12 @@ let bezier_curve = [];
 let bool_adding = false;
 let bool_found = false;
 
+// For Bernstein polynomials
+const CANVAS_SIZE = 500;
+const GRID_SIZE = CANVAS_SIZE / 4;
+
+let binomial_coefficients;
+
 let bezier_sketch = function (p) {
 
   p.clearBezierCurve = function () {
@@ -71,6 +77,7 @@ let bezier_sketch = function (p) {
       COLORS.push(p.color(color_hue % 360, 100, 100));
       color_hue += 20;
       p.colorMode(p.HSB);
+      binomial_coefficients = pascalsTriangle(number_of_points);
     }
   };
   // Setting up the canvas, the buttons and the slider.
@@ -244,14 +251,17 @@ let bezier_sketch = function (p) {
   };
 }
 
+function pascalsTriangle(n) {
+  let line = [1];
+  for (let k = 0; k < n; k++) {
+    line.push(line[k] * (n - k) / (k + 1));
+  }
+  return line;
+};
+
 
 
 ////// BERNSTEIN POLYNOMIALS
-const CANVAS_SIZE = 500;
-const GRID_SIZE = CANVAS_SIZE / 4;
-
-let binomial_coefficients;
-
 let bernstein_sketch = function (p) {
 
   let color_hue = 0
@@ -262,13 +272,13 @@ let bernstein_sketch = function (p) {
     p.colorMode(p.RGB);
   };
 
-  p.pascalsTriangle = function (n) {
-    let line = [1];
-    for (let k = 0; k < n; k++) {
-      line.push(line[k] * (n - k) / (k + 1));
-    }
-    return line;
-  };
+  // p.pascalsTriangle = function (n) {
+  //   let line = [1];
+  //   for (let k = 0; k < n; k++) {
+  //     line.push(line[k] * (n - k) / (k + 1));
+  //   }
+  //   return line;
+  // };
 
 
   p.setup = function () {
@@ -279,7 +289,7 @@ let bernstein_sketch = function (p) {
       p.redraw();
     });
 
-    binomial_coefficients = p.pascalsTriangle(number_of_points);
+    binomial_coefficients = pascalsTriangle(number_of_points);
     p.noLoop();
   };
 
