@@ -6,6 +6,7 @@ const POINT_RADIUS = 5;
 const POINT_DIAMETER = 2 * POINT_RADIUS;
 const STROKE_WEIGHT_BEZIER_CURVE = 2;
 const STROKE_WEIGHT_HELPER_LINES = 1;
+const NUMBER_OF_STEPS = 100;
 
 // Color constants
 const COLOR_BEZIER_CURVE = 0; // 0 means 'black'
@@ -154,7 +155,10 @@ function draw() {
     const vs = [];
 
     for (let j = 0; j < current.length - 1; j++) {
-      vs.push(p5.Vector.lerp(current[j], current[j + 1], slider.value())); // TODO: Write De Casteljau's algorithm!
+      t = slider.value();
+      // Linear interpolation
+      vec = createVector(current[j].x * (1-t) + t * current[j+1].x, current[j].y*(1-t) + t*current[j+1].y);
+      vs.push(vec);
     }
 
     // Draw helper points
@@ -182,7 +186,6 @@ function draw() {
       vertex(v.x, v.y);
     }
     endShape();
-
 
     current = vs;
     if (i >= number_of_points - 2) {
