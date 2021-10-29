@@ -115,10 +115,12 @@ function draw(){
 		circle(p.x, p.y, POINT_DIAMETER);
 	}
 	//Draw Helper Points
+	let idx = 0;
 	for (const h of helper_points) {
+		idx++;
 		for(const p of h){
-			stroke(COLOR_POINTS);
-			fill(123);
+			stroke(COLORS[idx]);
+			fill(COLORS[idx]);
 			circle(p.x, p.y, POINT_DIAMETER);
 		}
 	}
