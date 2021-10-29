@@ -2,6 +2,8 @@ const CANVAS_SIZE = 500;
 const GRID_SIZE = CANVAS_SIZE / 4;
 const NUMBER_OF_STEPS = 100;
 const COLORS = [];
+const POINT_RADIUS = 5;
+const POINT_DIAMETER = 2 * POINT_RADIUS;
 
 let binomial_coefficients;
 let number_of_points;
@@ -9,7 +11,7 @@ let number_of_points;
 let color_hue = 0
 function addPoint() {
   colorMode(HSB);
-  COLORS.push(color(color_hue % 360, 100, 100));
+  COLORS.push(color(color_hue % 360, 100, 90));
   color_hue += 30
   colorMode(RGB);
 }
@@ -99,6 +101,13 @@ function functionPlot(n) {
       let f_x = bernstein(n, j, x);
       let y = (-1) * f_x * (1 / Math.pow(CANVAS_SIZE, n - 1));
       vertex(x, y);
+
+      // Set points for slider value (t parameter)
+      if(slider.value() == i){
+        fill(COLORS[j]);
+        circle(x, y, POINT_DIAMETER);
+        noFill();
+      }
     }
     endShape();
   }
