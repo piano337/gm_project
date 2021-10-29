@@ -1,5 +1,6 @@
 const POINTS = [];
 const COLORS = [];
+const GRAPH_COLORS = [];
 const CANVAS_WIDTH = 600;
 const CANVAS_HEIGHT = 400;
 const POINT_RADIUS = 5;
@@ -26,7 +27,7 @@ let bool_found = false;
 
 let bezier_sketch = function (p) {
 
-  p.clearBezierCurve = function() {
+  p.clearBezierCurve = function () {
     bezier_curve.splice(0);
     slider.value("0");
     output_t.html(
@@ -243,4 +244,112 @@ let bezier_sketch = function (p) {
   };
 }
 
+
+
+////// BERNSTEIN POLYNOMIALS
+const CANVAS_SIZE = 500;
+const GRID_SIZE = CANVAS_SIZE / 4;
+
+let binomial_coefficients;
+
+let bernstein_sketch = function (p) {
+
+  let color_hue = 0
+  p.addPoint = function () {
+    p.colorMode(p.HSB);
+    GRAPH_COLORS.push(p.color(color_hue % 360, 100, 90));
+    color_hue += 30
+    p.colorMode(p.RGB);
+  };
+
+  p.pascalsTriangle = function (n) {
+    let line = [1];
+    for (let k = 0; k < n; k++) {
+      line.push(line[k] * (n - k) / (k + 1));
+    }
+    return line;
+  };
+
+
+  p.setup = function () {
+    let bernsteinCanvas = p.createCanvas(CANVAS_SIZE, CANVAS_SIZE);
+    bernsteinCanvas.parent('bernstein-canvas-container');
+    slider = p.select('#slider_t_value');
+    slider.input(() => {
+      p.redraw();
+    });
+
+    binomial_coefficients = p.pascalsTriangle(number_of_points);
+    p.noLoop();
+  };
+
+  p.draw = function () {
+    p.background('linen');
+    p.graphGrid();
+    for (let i = 0; i <= number_of_points; i++) p.addPoint();
+    p.functionPlot(number_of_points);
+    p.graphAxis();
+  };
+
+  p.bernstein = function (n, j, t) {
+    const coefficient = binomial_coefficients[j];
+    return (coefficient * Math.pow(t, j) * Math.pow((CANVAS_SIZE - t), n - j));
+  };
+
+  p.graphGrid = function () {
+    // Grid
+    p.stroke('grey');
+    p.strokeWeight(1);
+    let x = Math.floor(p.width / GRID_SIZE);
+    let y = Math.floor(p.height / GRID_SIZE);
+    for (let i = 0; i < x; i++) {
+      p.line(i * GRID_SIZE, 0, i * GRID_SIZE, p.height);
+    }
+    for (let j = 0; j < y; j++) {
+      p.line(0, j * GRID_SIZE, p.width, j * GRID_SIZE);
+    }
+  }
+
+  p.graphAxis = function () {
+    p.translate(0, -(p.height));
+    p.stroke(0);
+    p.strokeWeight(5);
+
+    // x axis
+    p.line(0, p.height, p.width, p.height);
+
+    // y axis
+    p.line(0, 0, 0, p.height);
+
+  };
+
+  p.functionPlot = function (n) {
+    p.translate(0, p.height);
+    p.strokeWeight(2);
+    p.noFill();
+    for (let j = 0; j <= n; j++) {
+      p.stroke(GRAPH_COLORS[j]);
+      p.beginShape();
+      for (let i = 0; i <= NUMBER_OF_STEPS; i++) {
+        let x = i * (CANVAS_SIZE / NUMBER_OF_STEPS);
+        let f_x = p.bernstein(n, j, x);
+        let y = (-1) * f_x * (1 / Math.pow(CANVAS_SIZE, n - 1));
+        p.vertex(x, y);
+
+        // Set points for slider value (t parameter)
+        if (slider.value() == i) {
+          p.fill(GRAPH_COLORS[j]);
+          p.circle(x, y, POINT_DIAMETER);
+          p.noFill();
+        }
+      }
+      p.endShape();
+    }
+  };
+
+}
+
+///////
+
 let bezier_p5 = new p5(bezier_sketch);
+let bernstein_p5 = new p5(bernstein_sketch);
