@@ -29,7 +29,7 @@ let bool_found = false;
 const CANVAS_SIZE = 500;
 const GRID_SIZE = CANVAS_SIZE / 4;
 
-let binomial_coefficients;
+let binomial_coefficients = null;
 
 let bezier_sketch = function (p) {
 
@@ -65,6 +65,11 @@ let bezier_sketch = function (p) {
         }
       }
     }
+  };
+
+  p.calcTangent = function (b_1, b_0) {
+    return p.createVector(number_of_points * (b_1.x - b_0.x), number_of_points * (b_1.y - b_0.y));
+    
   };
   // Function to add a single point with coordinates (x,y) to the POINTS-list and
   // calculating a new color based only on the hue value as defined in the HSB color model.
@@ -226,6 +231,20 @@ let bezier_sketch = function (p) {
           p.circle(v.x, v.y, POINT_RADIUS);
         }
       }
+
+      // Calculate the tangent vector
+      // console.log("h1:", helper_points[1], "h0:", helper_points[0]);
+      if(helper_points.length == 2 && slider.value() < NUMBER_OF_STEPS){
+        tangent_vec = p.calcTangent(helper_points[1], helper_points[0]);
+        p.stroke(COLOR_BEZIER_CURVE);
+        p.noFill();
+        p.beginShape();
+        let point_on_bezier = bezier_curve[slider.value()];
+        p.vertex(point_on_bezier.x, point_on_bezier.y);
+        p.vertex(tangent_vec.x, tangent_vec.y);
+        p.endShape();
+      }
+
 
       // Draw helper lines
       p.stroke(COLORS[i]);
