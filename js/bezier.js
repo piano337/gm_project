@@ -8,6 +8,7 @@ const POINT_DIAMETER = 2 * POINT_RADIUS;
 const STROKE_WEIGHT_BEZIER_CURVE = 2;
 const STROKE_WEIGHT_HELPER_LINES = 1;
 const NUMBER_OF_STEPS = 100;
+const TANGENT_LEN_FACTOR = 0.3;
 
 // Color constants
 const COLOR_BEZIER_CURVE = 0; // 0 means 'black'
@@ -68,7 +69,8 @@ let bezier_sketch = function (p) {
   };
 
   p.calcTangent = function (b_1, b_0) {
-    return p.createVector(number_of_points * (b_1.x - b_0.x), number_of_points * (b_1.y - b_0.y));
+    let factor = TANGENT_LEN_FACTOR * number_of_points;
+    return p.createVector(factor * (b_1.x - b_0.x), factor * (b_1.y - b_0.y));
     
   };
   // Function to add a single point with coordinates (x,y) to the POINTS-list and
@@ -241,7 +243,7 @@ let bezier_sketch = function (p) {
         p.beginShape();
         let point_on_bezier = bezier_curve[slider.value()];
         p.vertex(point_on_bezier.x, point_on_bezier.y);
-        p.vertex(tangent_vec.x, tangent_vec.y);
+        p.vertex(point_on_bezier.x + tangent_vec.x, point_on_bezier.y + tangent_vec.y);
         p.endShape();
       }
 
