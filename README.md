@@ -2,6 +2,13 @@
 
 ## Bézier curves
 
+## Bézier surface
+
+Start a simple server on localhost 8000:
+
+```
+python3 -m http.server
+```
 
 ### References
 
