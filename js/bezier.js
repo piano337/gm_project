@@ -9,9 +9,12 @@ const STROKE_WEIGHT_BEZIER_CURVE = 2;
 const STROKE_WEIGHT_HELPER_LINES = 1;
 const NUMBER_OF_STEPS = 100;
 const TANGENT_LEN_FACTOR = 0.3;
+const SLIDER_MIN = 0;
+const SLIDER_MAX = 100;
 
 // Color constants
 const COLOR_BEZIER_CURVE = 0; // 0 means 'black'
+const COLOR_TANGENT = "#C0C0C0";
 const COLOR_CANVAS = "linen";
 const COLOR_POINTS = "#696969"; // 0 means 'black'
 
@@ -33,16 +36,15 @@ const GRID_SIZE = CANVAS_SIZE / 4;
 let binomial_coefficients = null;
 
 let bezier_sketch = function (p) {
-
   p.clearBezierCurve = function () {
     bezier_curve.splice(0);
     slider.value("0");
     output_t.html(
       "t = " +
-      (slider.value() / NUMBER_OF_STEPS).toLocaleString(
-        undefined, // leave undefined to use the visitor's browser locale or a string like 'en-US' to override it.
-        { minimumFractionDigits: 2 }
-      )
+        (slider.value() / NUMBER_OF_STEPS).toLocaleString(
+          undefined, // leave undefined to use the visitor's browser locale or a string like 'en-US' to override it.
+          { minimumFractionDigits: 2 }
+        )
     );
   };
 
@@ -71,7 +73,6 @@ let bezier_sketch = function (p) {
   p.calcTangent = function (b_1, b_0) {
     let factor = TANGENT_LEN_FACTOR * number_of_points;
     return p.createVector(factor * (b_1.x - b_0.x), factor * (b_1.y - b_0.y));
-    
   };
   // Function to add a single point with coordinates (x,y) to the POINTS-list and
   // calculating a new color based only on the hue value as defined in the HSB color model.
@@ -89,7 +90,6 @@ let bezier_sketch = function (p) {
   };
   // Setting up the canvas, the buttons and the slider.
   p.setup = function () {
-
     let bezierCanvas = p.createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
     bezierCanvas.parent("bezier-canvas-container");
     p.addPoint(100, 130);
@@ -103,10 +103,10 @@ let bezier_sketch = function (p) {
     slider.input(() => {
       output_t.html(
         "t = " +
-        (slider.value() / NUMBER_OF_STEPS).toLocaleString(
-          undefined, // leave undefined to use the visitor's browser locale or a string like 'en-US' to override it.
-          { minimumFractionDigits: 2 }
-        )
+          (slider.value() / NUMBER_OF_STEPS).toLocaleString(
+            undefined, // leave undefined to use the visitor's browser locale or a string like 'en-US' to override it.
+            { minimumFractionDigits: 2 }
+          )
       );
     });
 
@@ -217,45 +217,48 @@ let bezier_sketch = function (p) {
 
       current_points = helper_points;
 
-
       // Draw helper points
-      for (const v of helper_points) {
-        // Draw point on Bézier curve...
-        if (i == number_of_points - 2) {
-          p.stroke(COLOR_BEZIER_CURVE);
-          p.fill(COLOR_BEZIER_CURVE);
-          p.circle(v.x, v.y, POINT_DIAMETER);
+      if (!(slider.value() == SLIDER_MIN || slider.value() == SLIDER_MAX)) {
+        for (const v of helper_points) {
+          // Draw point on Bézier curve...
+          if (i == number_of_points - 2) {
+            p.stroke(COLOR_BEZIER_CURVE);
+            p.fill(COLOR_BEZIER_CURVE);
+            p.circle(v.x, v.y, POINT_DIAMETER);
+          }
+          // ... else draw smaller points as helper points
+          else {
+            p.stroke(COLORS[i]);
+            p.fill(COLORS[i]);
+            p.circle(v.x, v.y, POINT_RADIUS);
+          }
         }
-        // ... else draw smaller points as helper points
-        else {
-          p.stroke(COLORS[i]);
-          p.fill(COLORS[i]);
-          p.circle(v.x, v.y, POINT_RADIUS);
-        }
-      }
 
-      // Calculate the tangent vector
-      // console.log("h1:", helper_points[1], "h0:", helper_points[0]);
-      if(helper_points.length == 2 && slider.value() < NUMBER_OF_STEPS){
-        tangent_vec = p.calcTangent(helper_points[1], helper_points[0]);
-        p.stroke(COLOR_BEZIER_CURVE);
+        // Draw helper lines
+        p.stroke(COLORS[i]);
         p.noFill();
         p.beginShape();
-        let point_on_bezier = bezier_curve[slider.value()];
-        p.vertex(point_on_bezier.x, point_on_bezier.y);
-        p.vertex(point_on_bezier.x + tangent_vec.x, point_on_bezier.y + tangent_vec.y);
+        for (const v of helper_points) {
+          p.vertex(v.x, v.y);
+        }
         p.endShape();
-      }
 
-
-      // Draw helper lines
-      p.stroke(COLORS[i]);
-      p.noFill();
-      p.beginShape();
-      for (const v of helper_points) {
-        p.vertex(v.x, v.y);
+        // Calculate the tangent vector
+        if (helper_points.length == 2 && slider.value() < NUMBER_OF_STEPS) {
+          tangent_vec = p.calcTangent(helper_points[1], helper_points[0]);
+          p.stroke(COLOR_TANGENT);
+          p.strokeWeight(STROKE_WEIGHT_BEZIER_CURVE);
+          p.noFill();
+          p.beginShape();
+          let point_on_bezier = bezier_curve[slider.value()];
+          p.vertex(point_on_bezier.x, point_on_bezier.y);
+          p.vertex(
+            point_on_bezier.x + tangent_vec.x,
+            point_on_bezier.y + tangent_vec.y
+          );
+          p.endShape();
+        }
       }
-      p.endShape();
     }
 
     // Draw Bézier curve
@@ -270,26 +273,23 @@ let bezier_sketch = function (p) {
     p.endShape();
     p.strokeWeight(STROKE_WEIGHT_HELPER_LINES);
   };
-}
+};
 
 function pascalsTriangle(n) {
   let line = [1];
   for (let k = 0; k < n; k++) {
-    line.push(line[k] * (n - k) / (k + 1));
+    line.push((line[k] * (n - k)) / (k + 1));
   }
   return line;
-};
-
-
+}
 
 ////// BERNSTEIN POLYNOMIALS
 let bernstein_sketch = function (p) {
-
-  let color_hue = 0
+  let color_hue = 0;
   p.addPoint = function () {
     p.colorMode(p.HSB);
     GRAPH_COLORS.push(p.color(color_hue % 360, 100, 90));
-    color_hue += 30
+    color_hue += 30;
     p.colorMode(p.RGB);
   };
 
@@ -301,11 +301,10 @@ let bernstein_sketch = function (p) {
   //   return line;
   // };
 
-
   p.setup = function () {
     let bernsteinCanvas = p.createCanvas(CANVAS_SIZE, CANVAS_SIZE);
-    bernsteinCanvas.parent('bernstein-canvas-container');
-    slider = p.select('#slider_t_value');
+    bernsteinCanvas.parent("bernstein-canvas-container");
+    slider = p.select("#slider_t_value");
     slider.input(() => {
       p.redraw();
     });
@@ -315,7 +314,7 @@ let bernstein_sketch = function (p) {
   };
 
   p.draw = function () {
-    p.background('linen');
+    p.background("linen");
     p.graphGrid();
     for (let i = 0; i <= number_of_points; i++) p.addPoint();
     p.functionPlot(number_of_points);
@@ -324,12 +323,12 @@ let bernstein_sketch = function (p) {
 
   p.bernstein = function (n, j, t) {
     const coefficient = binomial_coefficients[j];
-    return (coefficient * Math.pow(t, j) * Math.pow((CANVAS_SIZE - t), n - j));
+    return coefficient * Math.pow(t, j) * Math.pow(CANVAS_SIZE - t, n - j);
   };
 
   p.graphGrid = function () {
     // Grid
-    p.stroke('grey');
+    p.stroke("grey");
     p.strokeWeight(1);
     let x = Math.floor(p.width / GRID_SIZE);
     let y = Math.floor(p.height / GRID_SIZE);
@@ -339,10 +338,10 @@ let bernstein_sketch = function (p) {
     for (let j = 0; j < y; j++) {
       p.line(0, j * GRID_SIZE, p.width, j * GRID_SIZE);
     }
-  }
+  };
 
   p.graphAxis = function () {
-    p.translate(0, -(p.height));
+    p.translate(0, -p.height);
     p.stroke(0);
     p.strokeWeight(5);
 
@@ -351,7 +350,6 @@ let bernstein_sketch = function (p) {
 
     // y axis
     p.line(0, 0, 0, p.height);
-
   };
 
   p.functionPlot = function (n) {
@@ -364,7 +362,7 @@ let bernstein_sketch = function (p) {
       for (let i = 0; i <= NUMBER_OF_STEPS; i++) {
         let x = i * (CANVAS_SIZE / NUMBER_OF_STEPS);
         let f_x = p.bernstein(n, j, x);
-        let y = (-1) * f_x * (1 / Math.pow(CANVAS_SIZE, n - 1));
+        let y = -1 * f_x * (1 / Math.pow(CANVAS_SIZE, n - 1));
         p.vertex(x, y);
 
         // Set points for slider value (t parameter)
@@ -377,8 +375,7 @@ let bernstein_sketch = function (p) {
       p.endShape();
     }
   };
-
-}
+};
 
 ///////
 
