@@ -47,7 +47,42 @@ function init() {
   helper.rotation.x = Math.PI / 2;
   group.add(helper);
 
-  //
+  // Adding some lines >>>>>>>>>>>
+  //create a blue LineBasicMaterial 
+  const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+  const points = [];
+
+  points.push(new THREE.Vector3(-10, 0, 0));
+  points.push(new THREE.Vector3(0, 10, 0));
+  points.push(new THREE.Vector3(10, 0, 0));
+
+  const geometry = new THREE.BufferGeometry().setFromPoints(points);
+  const line = new THREE.Line( geometry, material );
+  group.add(line);
+  // <<<<<<<<<<< Adding some lines
+
+  // Adding some points >>>>>>
+  const vertices = [];
+
+  for ( let i = 0; i < 10; i ++ ) {
+  
+    const x = THREE.MathUtils.randFloatSpread( 100 );
+    const y = THREE.MathUtils.randFloatSpread( 100 );
+    const z = THREE.MathUtils.randFloatSpread( 100 );
+  
+    vertices.push( x, y, z );
+  
+  }
+  
+  const geometry2 = new THREE.BufferGeometry();
+  geometry2.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+  
+  const material2 = new THREE.PointsMaterial( { color: 'red' } );
+  
+  const points2 = new THREE.Points( geometry2, material2 );
+  
+  group.add( points2 );
+  // <<<<<<< Adding some points
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
