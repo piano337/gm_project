@@ -179,7 +179,7 @@ function init() {
   handleCameraAngle();
   handleUWValue();
 
-  document.getElementById("defaultOpen").click();
+  computeBezierSurface();
 
   document.getElementById("webglOp").appendChild(renderer.domElement);
 
@@ -411,34 +411,6 @@ function updateOutputLabels() {
 
 function handleWireframe() {
   computeBezierSurface();
-}
-
-function openPage(pageName, elmnt, color) {
-  var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablink");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].style.backgroundColor = "";
-  }
-  document.getElementById(pageName).style.display = "block";
-  elmnt.style.backgroundColor = color;
-
-  if (pageName === "line1") {
-    pageCurrent = "line1";
-    computeBezierSurface();
-  } else if (pageName == "line2") {
-    pageCurrent = "line2";
-    computeBezierSurface();
-  } else if (pageName == "line3") {
-    pageCurrent = "line3";
-    computeBezierSurface();
-  } else {
-    pageCurrent = "line4";
-    computeBezierSurface();
-  }
 }
 
 function setupCubePoints() {
