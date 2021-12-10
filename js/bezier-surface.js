@@ -47,7 +47,6 @@ let p30zRange, p31zRange, p32zRange, p33zRange;
 let uValue, wValue, uRange, wRange;
 let scene, camera, renderer;
 let cameraAngle, camRadius;
-let halfCubeSize;
 let arrowHelper1, arrowHelper2, arrowHelper3;
 let arrowDirection1 = new THREE.Vector3();
 let arrowDirection2 = new THREE.Vector3();
@@ -64,6 +63,7 @@ let step;
 let surfaceMesh, lineWire;
 const sampleU = 0.5;
 const sampleW = 0.7;
+let showSurfaceAsWireFrame = true;
 
 window.onload = init;
 
@@ -82,25 +82,8 @@ function init() {
 
   window.addEventListener("resize", onResize, false);
 
-  wireCheck = document.getElementById("wireframe");
-  wireCheck.addEventListener("click", handleWireframe, false);
-
   cameraAngle = 25;
   camRadius = 5;
-
-  halfCubeSize = 1;
-
-  // Camera Angle
-  cameraAngleRange = document.getElementById("cameraAngle");
-  cameraAngleRange.addEventListener(
-    "input",
-    function () {
-      cameraAngle = parseFloat(cameraAngleRange.value);
-      document.getElementById("opCameraAngle").textContent = cameraAngle;
-      handleCameraAngle();
-    },
-    false
-  );
 
   renderer.setClearColor(new THREE.Color(0x111111));
   renderer.setSize(width, window.innerHeight);
@@ -157,7 +140,7 @@ function init() {
 
   computeBezierSurface();
 
-  document.getElementById("webglOp").appendChild(renderer.domElement);
+  document.getElementById("container").appendChild(renderer.domElement);
 
   animate();
   render();
@@ -331,10 +314,6 @@ function updateOutputLabels() {
   p33xRange.value = p33x;
   p33yRange.value = p33y;
   p33zRange.value = p33z;
-}
-
-function handleWireframe() {
-  computeBezierSurface();
 }
 
 function setupGrid() {
@@ -791,7 +770,7 @@ function renderSurface() {
   );
   geometry.computeVertexNormals();
 
-  if (document.getElementById("wireframe").checked === true) {
+  if (showSurfaceAsWireFrame) {
     let surfaceWire = new THREE.WireframeGeometry(geometry);
     lineWire = new THREE.LineSegments(surfaceWire, materialLine);
     scene.add(lineWire);
