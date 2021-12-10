@@ -88,7 +88,7 @@ function init() {
   cameraAngle = 25;
   camRadius = 5;
 
-  halfCubeSide = 1;
+  halfCubeSize = 1;
 
   // Camera Angle
   cameraAngleRange = document.getElementById("cameraAngle");
@@ -152,8 +152,6 @@ function init() {
   let directionalLight = new THREE.DirectionalLight(0xffffff, 0.65);
   scene.add(directionalLight);
 
-  setupCubePoints();
-  setupWireframeBox();
   handleCameraAngle();
   handleUWValue();
 
@@ -337,111 +335,6 @@ function updateOutputLabels() {
 
 function handleWireframe() {
   computeBezierSurface();
-}
-
-function setupCubePoints() {
-  let pt = new THREE.Vector3(halfCubeSide, -halfCubeSide, halfCubeSide); // Point A
-  points.push(pt);
-  pt = new THREE.Vector3(halfCubeSide, -halfCubeSide, -halfCubeSide); // Point B
-  points.push(pt);
-  pt = new THREE.Vector3(-halfCubeSide, -halfCubeSide, -halfCubeSide); // Point C
-  points.push(pt);
-  pt = new THREE.Vector3(-halfCubeSide, -halfCubeSide, halfCubeSide); // Point D
-  points.push(pt);
-  pt = new THREE.Vector3(halfCubeSide, halfCubeSide, halfCubeSide); // Point E
-  points.push(pt);
-  pt = new THREE.Vector3(halfCubeSide, halfCubeSide, -halfCubeSide); // Point F
-  points.push(pt);
-  pt = new THREE.Vector3(-halfCubeSide, halfCubeSide, -halfCubeSide); // Point G
-  points.push(pt);
-  pt = new THREE.Vector3(-halfCubeSide, halfCubeSide, halfCubeSide); // Point H
-  points.push(pt);
-  pt = new THREE.Vector3(0, 0, 0); // Point O
-  points.push(pt);
-}
-
-function setupWireframeBox() {
-  let line1, line2, line3, line4, line5, line6;
-  const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
-  const geometry1 = new THREE.BufferGeometry();
-
-  const geomVertices1 = [];
-  geomVertices1.push(halfCubeSide, -halfCubeSide, halfCubeSide);
-  geomVertices1.push(halfCubeSide, -halfCubeSide, -halfCubeSide);
-  geomVertices1.push(-halfCubeSide, -halfCubeSide, -halfCubeSide);
-  geomVertices1.push(-halfCubeSide, -halfCubeSide, halfCubeSide);
-  geomVertices1.push(halfCubeSide, -halfCubeSide, halfCubeSide);
-
-  geometry1.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(geomVertices1, 3)
-  );
-  line1 = new THREE.Line(geometry1, material);
-  scene.add(line1);
-
-  const geometry2 = new THREE.BufferGeometry();
-  const geomVertices2 = [];
-  geomVertices2.push(halfCubeSide, halfCubeSide, halfCubeSide);
-  geomVertices2.push(halfCubeSide, halfCubeSide, -halfCubeSide);
-  geomVertices2.push(-halfCubeSide, halfCubeSide, -halfCubeSide);
-  geomVertices2.push(-halfCubeSide, halfCubeSide, halfCubeSide);
-  geomVertices2.push(halfCubeSide, halfCubeSide, halfCubeSide);
-
-  geometry2.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(geomVertices2, 3)
-  );
-  line2 = new THREE.Line(geometry2, material);
-  scene.add(line2);
-
-  const geometry3 = new THREE.BufferGeometry();
-  const geomVertices3 = [];
-  geomVertices3.push(halfCubeSide, -halfCubeSide, halfCubeSide);
-  geomVertices3.push(halfCubeSide, halfCubeSide, halfCubeSide);
-
-  geometry3.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(geomVertices3, 3)
-  );
-  line3 = new THREE.Line(geometry3, material);
-  scene.add(line3);
-
-  const geometry4 = new THREE.BufferGeometry();
-  const geomVertices4 = [];
-  geomVertices4.push(halfCubeSide, -halfCubeSide, -halfCubeSide);
-  geomVertices4.push(halfCubeSide, halfCubeSide, -halfCubeSide);
-
-  geometry4.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(geomVertices4, 3)
-  );
-  line4 = new THREE.Line(geometry4, material);
-  scene.add(line4);
-
-  const geometry5 = new THREE.BufferGeometry();
-  const geomVertices5 = [];
-
-  geomVertices5.push(-halfCubeSide, -halfCubeSide, -halfCubeSide);
-  geomVertices5.push(-halfCubeSide, halfCubeSide, -halfCubeSide);
-
-  geometry5.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(geomVertices5, 3)
-  );
-  line5 = new THREE.Line(geometry5, material);
-  scene.add(line5);
-
-  const geometry6 = new THREE.BufferGeometry();
-  const geomVertices6 = [];
-  geomVertices6.push(-halfCubeSide, -halfCubeSide, halfCubeSide);
-  geomVertices6.push(-halfCubeSide, halfCubeSide, halfCubeSide);
-
-  geometry6.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(geomVertices6, 3)
-  );
-  line6 = new THREE.Line(geometry6, material);
-  scene.add(line6);
 }
 
 function setupGrid() {
