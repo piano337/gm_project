@@ -24,9 +24,11 @@
 
     Tested on Chrome, Firefox and Edge, on Windows.
     Uses WebGL as available in three.js
- */
+*/
 
-"option strict";
+import * as THREE from "./three.js/build/three.module.js";
+
+import { OrbitControls } from "./three.js/examples/jsm/controls/OrbitControls.js";
 
 let p00x, p01x, p02x, p03x, p00y, p01y, p02y, p03y, p00z, p01z, p02z, p03z;
 let p10x, p11x, p12x, p13x, p10y, p11y, p12y, p13y, p10z, p11z, p12z, p13z;
@@ -56,7 +58,6 @@ let surfacePoints = [];
 let point00, point01, point02, point03, point10, point11, point12, point13;
 let point20, point21, point22, point23, point30, point31, point32, point33;
 let pointUW;
-let line1, line2, line3, line4, line5, line6;
 let lineControl1, lineControl2, lineControl3, lineControl4, lineControl5;
 let noDivisions = 30;
 let step;
@@ -65,12 +66,14 @@ const sampleU = 0.5;
 const sampleW = 0.7;
 let showSurfaceAsWireFrame = true;
 
-window.onload = init;
+init();
+animate();
 
 function init() {
-  initializeValues();
+  const container = document.getElementById("container");
 
   scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x685754);
   let width = (7 * window.innerWidth) / 10;
   camera = new THREE.PerspectiveCamera(
     45,
@@ -78,12 +81,13 @@ function init() {
     0.1,
     1000
   );
+  camera.position.set(0, 0, 200);
   renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  container.appendChild(renderer.domElement);
 
-  window.addEventListener("resize", onResize, false);
-
-  cameraAngle = 25;
-  camRadius = 5;
+  window.addEventListener("resize", onWindowResize);
 
   renderer.setClearColor(new THREE.Color(0x111111));
   renderer.setSize(width, window.innerHeight);
@@ -135,15 +139,24 @@ function init() {
   let directionalLight = new THREE.DirectionalLight(0xffffff, 0.65);
   scene.add(directionalLight);
 
-  handleCameraAngle();
+  // For Camera Control
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.minDistance = 1;
+  controls.maxDistance = 20;
+  cameraAngle = 25;
+  camRadius = 5;
+  let angle = (cameraAngle * Math.PI) / 180.0;
+  let xCam = camRadius * Math.cos(angle);
+  let zCam = camRadius * Math.sin(angle);
+  camera.position.set(xCam, 3, zCam);
+  camera.lookAt(scene.position);
+
+  initializeValues();
+
   handleUWValue();
 
   computeBezierSurface();
 
-  document.getElementById("container").appendChild(renderer.domElement);
-
-  animate();
-  render();
 }
 
 function initializeValues() {
@@ -203,63 +216,6 @@ function initializeValues() {
   wValue = 0.6;
 
   step = 1.0 / noDivisions;
-}
-
-function setupSurface5() {
-  p00x = 1.0;
-  p00y = 0.0;
-  p00z = -1.0;
-  p01x = 0.1;
-  p01y = -0.3;
-  p01z = -1.0;
-  p02x = 0.1;
-  p02y = 0.3;
-  p02z = -1.0;
-  p03x = -1.0;
-  p03y = 0.0;
-  p03z = -1.0;
-
-  p10x = 0.1;
-  p10y = -1.0;
-  p10z = -0.3;
-  p11x = 0.1;
-  p11y = -0.3;
-  p11z = -0.3;
-  p12x = 0.1;
-  p12y = 0.3;
-  p12z = -0.3;
-  p13x = 0.1;
-  p13y = 1.0;
-  p13z = -0.3;
-
-  p20x = 0.1;
-  p20y = -1.0;
-  p20z = 0.3;
-  p21x = 0.1;
-  p21y = -0.3;
-  p21z = 0.3;
-  p22x = 0.1;
-  p22y = 0.3;
-  p22z = 0.3;
-  p23x = 0.1;
-  p23y = 1.0;
-  p23z = 0.3;
-
-  p30x = 1.0;
-  p30y = 0.0;
-  p30z = 1.0;
-  p31x = 0.1;
-  p31y = -0.3;
-  p31z = 1.0;
-  p32x = 0.1;
-  p32y = 0.3;
-  p32z = 1.0;
-  p33x = -1.0;
-  p33y = 0.0;
-  p33z = 1.0;
-
-  updateOutputLabels();
-  computeBezierSurface();
 }
 
 function updateOutputLabels() {
@@ -782,25 +738,15 @@ function renderSurface() {
   render();
 }
 
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
 function animate() {
   requestAnimationFrame(animate);
-  render();
-}
-
-function handleCameraAngle() {
-  let angle = (cameraAngle * Math.PI) / 180.0;
-  let xCam = camRadius * Math.cos(angle);
-  let zCam = camRadius * Math.sin(angle);
-  camera.position.set(xCam, 3, zCam);
-  camera.lookAt(scene.position);
-  render();
-}
-
-function onResize() {
-  width = (7 * window.innerWidth) / 10;
-  camera.aspect = width / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(width, window.innerHeight);
   render();
 }
 
