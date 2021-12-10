@@ -62,6 +62,8 @@ let lineControl1, lineControl2, lineControl3, lineControl4, lineControl5;
 let noDivisions = 30;
 let step;
 let surfaceMesh, lineWire;
+const sampleU = 0.5;
+const sampleW = 0.7;
 
 window.onload = init;
 
@@ -96,30 +98,6 @@ function init() {
       cameraAngle = parseFloat(cameraAngleRange.value);
       document.getElementById("opCameraAngle").textContent = cameraAngle;
       handleCameraAngle();
-    },
-    false
-  );
-
-  // Parameter U
-  uRange = document.getElementById("uValue");
-  uRange.addEventListener(
-    "input",
-    function () {
-      uValue = parseFloat(uRange.value);
-      document.getElementById("opUvalue").textContent = uValue.toFixed(3);
-      handleUWValue();
-    },
-    false
-  );
-
-  // Parameter W
-  wRange = document.getElementById("wValue");
-  wRange.addEventListener(
-    "input",
-    function () {
-      wValue = parseFloat(wRange.value);
-      document.getElementById("opWvalue").textContent = wValue.toFixed(3);
-      handleUWValue();
     },
     false
   );
@@ -887,8 +865,8 @@ function computeBezierSurfacePoint(uVal, wVal) {
 function handleUWValue() {
   scene.remove(pointUW);
   let uVal, wVal;
-  uVal = parseFloat(uRange.value);
-  wVal = parseFloat(wRange.value);
+  uVal = parseFloat(sampleU);
+  wVal = parseFloat(sampleW);
   let pt = computeBezierSurfacePoint(uVal, wVal);
 
   let sphereGeometry = new THREE.SphereGeometry(0.02, 20, 20);
