@@ -333,58 +333,6 @@ function updateOutputLabels() {
   p33xRange.value = p33x;
   p33yRange.value = p33y;
   p33zRange.value = p33z;
-
-  document.getElementById("opPoint00x").textContent = p00x.toFixed(3);
-  document.getElementById("opPoint01x").textContent = p01x.toFixed(3);
-  document.getElementById("opPoint02x").textContent = p02x.toFixed(3);
-  document.getElementById("opPoint03x").textContent = p03x.toFixed(3);
-  document.getElementById("opPoint00y").textContent = p00y.toFixed(3);
-  document.getElementById("opPoint01y").textContent = p01y.toFixed(3);
-  document.getElementById("opPoint02y").textContent = p02y.toFixed(3);
-  document.getElementById("opPoint03y").textContent = p03y.toFixed(3);
-  document.getElementById("opPoint00z").textContent = p00z.toFixed(3);
-  document.getElementById("opPoint01z").textContent = p01z.toFixed(3);
-  document.getElementById("opPoint02z").textContent = p02z.toFixed(3);
-  document.getElementById("opPoint03z").textContent = p03z.toFixed(3);
-
-  document.getElementById("opPoint10x").textContent = p10x.toFixed(3);
-  document.getElementById("opPoint11x").textContent = p11x.toFixed(3);
-  document.getElementById("opPoint12x").textContent = p12x.toFixed(3);
-  document.getElementById("opPoint13x").textContent = p13x.toFixed(3);
-  document.getElementById("opPoint10y").textContent = p10y.toFixed(3);
-  document.getElementById("opPoint11y").textContent = p11y.toFixed(3);
-  document.getElementById("opPoint12y").textContent = p12y.toFixed(3);
-  document.getElementById("opPoint13y").textContent = p13y.toFixed(3);
-  document.getElementById("opPoint10z").textContent = p10z.toFixed(3);
-  document.getElementById("opPoint11z").textContent = p11z.toFixed(3);
-  document.getElementById("opPoint12z").textContent = p12z.toFixed(3);
-  document.getElementById("opPoint13z").textContent = p13z.toFixed(3);
-
-  document.getElementById("opPoint20x").textContent = p20x.toFixed(3);
-  document.getElementById("opPoint21x").textContent = p21x.toFixed(3);
-  document.getElementById("opPoint22x").textContent = p22x.toFixed(3);
-  document.getElementById("opPoint23x").textContent = p23x.toFixed(3);
-  document.getElementById("opPoint20y").textContent = p20y.toFixed(3);
-  document.getElementById("opPoint21y").textContent = p21y.toFixed(3);
-  document.getElementById("opPoint22y").textContent = p22y.toFixed(3);
-  document.getElementById("opPoint23y").textContent = p23y.toFixed(3);
-  document.getElementById("opPoint20z").textContent = p20z.toFixed(3);
-  document.getElementById("opPoint21z").textContent = p21z.toFixed(3);
-  document.getElementById("opPoint22z").textContent = p22z.toFixed(3);
-  document.getElementById("opPoint23z").textContent = p23z.toFixed(3);
-
-  document.getElementById("opPoint30x").textContent = p30x.toFixed(3);
-  document.getElementById("opPoint31x").textContent = p31x.toFixed(3);
-  document.getElementById("opPoint32x").textContent = p32x.toFixed(3);
-  document.getElementById("opPoint33x").textContent = p33x.toFixed(3);
-  document.getElementById("opPoint30y").textContent = p30y.toFixed(3);
-  document.getElementById("opPoint31y").textContent = p31y.toFixed(3);
-  document.getElementById("opPoint32y").textContent = p32y.toFixed(3);
-  document.getElementById("opPoint33y").textContent = p33y.toFixed(3);
-  document.getElementById("opPoint30z").textContent = p30z.toFixed(3);
-  document.getElementById("opPoint31z").textContent = p31z.toFixed(3);
-  document.getElementById("opPoint32z").textContent = p32z.toFixed(3);
-  document.getElementById("opPoint33z").textContent = p33z.toFixed(3);
 }
 
 function handleWireframe() {
