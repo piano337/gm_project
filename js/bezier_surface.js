@@ -154,6 +154,7 @@ function render() {
     color: 0xffffff,
     wireframe: false,
   });
+  var oneTime = true;
 function calcPoints(){
 
 
@@ -163,7 +164,7 @@ function calcPoints(){
     surfacePoints.push([]);
     points.length = 0;
     var result = new THREE.Vector3();
-    var result_dt = null;
+    var result_dt = new THREE.Vector3();
     var result_ds = new THREE.Vector3();
 
     //Setting up array
@@ -186,6 +187,11 @@ function calcPoints(){
         points[i][j].addVectors(aux1,aux2)
         //points[i][j]=points[i][j]*(1-t)+t*points[i][j+1]  
         }
+        //dt calculations
+        var aux3 = points[i][1].clone();
+        aux3.sub(points[i][0]);
+        aux3.multiplyScalar(n);
+        DT.push(aux3);
       }
 
         var aux1 = points[i][0].clone();
@@ -212,23 +218,78 @@ function calcPoints(){
         aux2.multiplyScalar(s)
         points2[i].addVectors(aux1,aux2)
         //points[i][0]=points[i][0]*(1-s)+s*points[i+1][0] 
+        //dt calculations
+        var aux3 = DT[i].clone();
+        var aux4 = DT[i+1].clone();
+        aux3.multiplyScalar(1-s)
+        aux4.multiplyScalar(s)
+        DT[i].addVectors(aux3,aux4)
         }
       }
     
-    
+      //ds(s,t)
+      var aux3 = points2[1].clone();
+      aux3.sub(points2[0]);
+      aux3.multiplyScalar(m);
+      result_ds = aux3.clone();
+      //b(s,t)
       var aux1 = points2[0].clone();
       var aux2 = points2[1].clone();
       aux1.multiplyScalar(1-s)
       aux2.multiplyScalar(s)
       result.addVectors(aux1,aux2)
+      //dt(s,t)
+      var aux3 = DT[0].clone();
+      var aux4 = DT[1].clone();
+      aux3.multiplyScalar(1-s)
+      aux4.multiplyScalar(s)
+      result_dt.addVectors(aux3,aux4)
       
 
       surfacePoints[Math.round(t*20)].push(result.clone());
-      var point = new THREE.Mesh(sphereGeometry, sphereMaterial);
-      point.position.x = result.x;
-      point.position.y = result.y;
-      point.position.z = result.z;
-      scene.add(point);
+
+      const S = 0.5;
+      const T = 0.5;
+
+      //We calculate all dt and ds but we only show one hard coded at s = 0.5 t = 0.5
+      if(s-S<0.05 && t-T<0.05 && t>=T && s>=S && oneTime){
+      	oneTime=false
+      	//Draw lines
+      	result_dt.normalize();
+      	result_ds.normalize();
+
+
+	  	arrowHelper1 = new THREE.ArrowHelper(
+	    result_dt,
+	    result,
+	    0.4,
+	    0xff0000,
+	    0.07,
+	    0.04
+	  );
+	  scene.add(arrowHelper1);
+
+	  arrowHelper2 = new THREE.ArrowHelper(
+	    result_ds,
+	    result,
+	    0.4,
+	    0x00ff0,
+	    0.07,
+	    0.04
+	  );
+	  scene.add(arrowHelper2);
+	  var arrow3 = new THREE.Vector3();
+	  arrow3.crossVectors(result_dt,result_ds);
+	  arrowHelper3 = new THREE.ArrowHelper(
+	    arrow3,
+	    result,
+	    0.4,
+	    0x60ff00,
+	    0.07,
+	    0.04
+	  );
+	  scene.add(arrowHelper3);
+	 }
     }
   }
 }
