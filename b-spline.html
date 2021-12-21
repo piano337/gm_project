@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <script src="js/p5.min.js"></script>
+  <!-- <script src="js/bezier-curve.js"></script> -->
+  <link rel="stylesheet" href="css/styles.css" />
+  <title>B-Spline</title>
+</head>
+
+<body>
+  <main>
+    <h1>B-Spline</h1>
+    <div style="display:flex; flex-direction: row; justify-content: center; align-items: center">
+      <div id="bezier-canvas-container" class="container"></div>
+      <div id="bernstein-canvas-container" class="container"></div>
+    </div>
+    <div id="control-container" class="container">
+      <button id="button_add">ADD</button>
+      <button id="button_del">DEL</button>
+      <input id="slider_t_value" type="range" min="0" max="100" value="0" />
+      <p id="t_value">t = 0.00</p>
+    </div>
+  </main>
+</body>
+
+</html>
