@@ -96,7 +96,7 @@ let bezier_sketch = function (p) {
     p.addPoint(230, 120);
     p.addPoint(300, 300);
     p.addPoint(530, 320);
-
+    
     output_t = p.select("#t_value");
 
     slider = p.select("#slider_t_value");

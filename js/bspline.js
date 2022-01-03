@@ -1,7 +1,7 @@
 const POINTS = []; //Control points
 const BSPLINE_DEGREE=2;
 const KNOTS = [100,200,300,450,480,500,529];
-const number_of_knots= 7;
+const number_of_knots= KNOTS.length;
 const MULTIPLICITY=[0,0,0,0,0,0,0];
 const COLORS = [];
 const GRAPH_COLORS = [];
@@ -145,14 +145,14 @@ let bezier_sketch = function (p) {
   p.setup = function () {
     let bezierCanvas = p.createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
     bezierCanvas.parent("bezier-canvas-container");
-    
-    p.addPoint(100, 130);
-	p.addPoint(230, 120);
-	p.addPoint(300, 300);
-	p.addPoint(530, 320);
 
-	p.addPoint(530, 120);
-	p.addPoint(330, 120);
+    p.addPoint(100, 130);
+    p.addPoint(230, 120);
+    p.addPoint(300, 300);
+    p.addPoint(530, 320);
+	  p.addPoint(530, 120);
+	  p.addPoint(330, 120);
+
     output_t = p.select("#t_value");
 
     slider = p.select("#slider_t_value");
@@ -180,11 +180,59 @@ let bezier_sketch = function (p) {
       }
     });
     p.BoorAlgorithm();
-    console.log(bspline_curve)
     p.noLoop();
   };
 
+  // Catching mouse pressed events:
+  // If "ADD" button was pressed before, set a new point and clear the Bézier curve,
+  // else go for moving a point, i.e. mouse drag event.
+  p.mousePressed = function () {
+    if (bool_adding) {
+      if (p.mouseX <= CANVAS_WIDTH && p.mouseY <= CANVAS_HEIGHT) {
+        p.addPoint(p.mouseX, p.mouseY);
+        bool_adding = false;
+        p.clearBezierCurve();
+        btn_add.removeAttribute("style");
+        p.BoorAlgorithm();
+      }
+    } else {
+      for (const point of POINTS) {
+        const d = p.dist(point.x, point.y, p.mouseX, p.mouseY);
+        if (d < POINT_RADIUS) {
+          point_to_move = point;
+          bool_found = true;
+          break;
+        }
+      }
+      if (bool_found) {
+        p.clearBezierCurve();
+      }
+      p.BoorAlgorithm();
+    }
+    p.redraw();
+  };
 
+  // If we are not adding a point, we maybe dragging a point to move it... :)
+  p.mouseDragged = function () {
+    if (!bool_adding) {
+      if (point_to_move) {
+        point_to_move.set(p.mouseX, p.mouseY);
+      }
+      if (bool_found) {
+        p.clearBezierCurve();
+      }
+    }
+    p.redraw();
+  };
+
+  p.mouseReleased = function () {
+    if (!bool_adding) {
+      point_to_move = null;
+      bool_found = false;
+    }
+    p.BoorAlgorithm();
+    p.redraw();
+  };
 
   // Drawing function
   // TODO:
