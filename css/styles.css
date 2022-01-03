@@ -6,7 +6,12 @@ body {
 .container {
   padding: 50px 20px 0px 20px;
   text-align: center;
-}ƒ
+}
+
+th, td {
+  padding-right: 10px;
+  padding-left: 10px;
+}
 
 canvas {
   border: 1px solid #000000;

@@ -1,8 +1,8 @@
 const POINTS = []; //Control points
-const BSPLINE_DEGREE=2;
-const KNOTS = [100,200,300,450,480,500,529];
-const number_of_knots= KNOTS.length;
-const MULTIPLICITY=[0,0,0,0,0,0,0];
+let BSPLINE_DEGREE=2;
+let KNOTS = [100,200,300,450,480,500,529];
+let number_of_knots= KNOTS.length;
+let MULTIPLICITY=[0,0,0,0,0,0,0];
 const COLORS = [];
 const GRAPH_COLORS = [];
 const CANVAS_WIDTH = 600;
@@ -43,6 +43,20 @@ const GRID_SIZE = CANVAS_SIZE / 4;
 let binomial_coefficients = null;
 
 let bezier_sketch = function (p) {
+  p.addKnotField = function () {
+    let table = document.getElementById("knot-table");
+    let lastRowNum = table.rows.length
+    let row = table.insertRow(-1);
+    let cell0 = row.insertCell(0);
+    let cell1 = row.insertCell(1);
+    let cell2 = row.insertCell(2);
+    let knotHTML = "<input id=\"knot" + lastRowNum + "\" type=\"number\" value=\"" + KNOTS[KNOTS.length-1] + "\"/></td>";
+    let multiplicityHTML = "<input id=\"mult" + lastRowNum + "\" type=\"number\" max=\"20\" value=\"0\"/></td>";
+    cell0.innerHTML = lastRowNum;
+    cell1.innerHTML = knotHTML;
+    cell2.innerHTML = multiplicityHTML;
+  }
+
   p.clearBezierCurve = function () {
     bezier_curve.splice(0);
     slider.value("0");
@@ -181,6 +195,22 @@ let bezier_sketch = function (p) {
     });
     p.BoorAlgorithm();
     p.noLoop();
+
+    // Init knots table:
+    for(let i = 0; i < KNOTS.length; i++){
+      let table = document.getElementById("knot-table");
+      let lastRowNum = table.rows.length
+      let row = table.insertRow(-1);
+      let cell0 = row.insertCell(0);
+      let cell1 = row.insertCell(1);
+      let cell2 = row.insertCell(2);
+      let knotHTML = "<input id=\"knot" + lastRowNum + "\" type=\"number\" value=\"" + KNOTS[i] + "\"/></td>";
+      let multiplicityHTML = "<input id=\"mult" + lastRowNum + "\" type=\"number\" max=\"20\" value=\"0\"/></td>";
+      cell0.innerHTML = lastRowNum;
+      cell1.innerHTML = knotHTML;
+      cell2.innerHTML = multiplicityHTML;
+    }
+
   };
 
   // Catching mouse pressed events:
@@ -235,9 +265,6 @@ let bezier_sketch = function (p) {
   };
 
   // Drawing function
-  // TODO:
-  // - Separate the logic from the view: separate the calculation of the Bézier curve from the visualization of it!
-  // - Creating the Bernstein polynomials with CindyJS or with p5.js.
   p.draw = function () {
     p.background(COLOR_CANVAS);
 
