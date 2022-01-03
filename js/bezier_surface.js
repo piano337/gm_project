@@ -24,9 +24,7 @@ var surfacePoints = [];
 let scene, camera, renderer;
 let cameraAngle, camRadius;
 let arrowHelper1, arrowHelper2, arrowHelper3;
-let arrowDirection1 = new THREE.Vector3();
-let arrowDirection2 = new THREE.Vector3();
-let arrowDirection3 = new THREE.Vector3();
+
 
 function init() {
   const container = document.getElementById("container");
