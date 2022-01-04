@@ -55,6 +55,21 @@ let bezier_sketch = function (p) {
     cell0.innerHTML = lastRowNum;
     cell1.innerHTML = knotHTML;
     cell2.innerHTML = multiplicityHTML;
+
+    // Adding last row values to arrays 
+    KNOTS.push(KNOTS[KNOTS.length-1]);
+    MULTIPLICITY.push(0);
+  }
+
+  // Delete last row in knot table
+  p.removeKnot = function () {
+    if(KNOTS.length < (POINTS.length + BSPLINE_DEGREE - 1)){
+      alert('The following equation must apply!:\nNumber of knots = Number of control points + degree - 1\n(Derived from L = K - n + 1)');
+    } else {
+      document.getElementById("knot-table").deleteRow(-1);
+      KNOTS.pop();
+      MULTIPLICITY.pop();
+    }
   }
 
   p.clearBezierCurve = function () {
@@ -184,6 +199,16 @@ let bezier_sketch = function (p) {
     btn_add.mousePressed(() => {
       bool_adding = true;
       btn_add.style("background-color", "#999");
+    });
+
+    btn_add_knot = p.select("#button_add_knot");
+    btn_add_knot.mousePressed(() => {
+      p.addKnotField();
+    });
+
+    btn_remove_knot = p.select("#button_remove_knot");
+    btn_remove_knot.mousePressed(() => {
+      p.removeKnot();
     });
 
     p.select("#button_del").mousePressed(() => {
