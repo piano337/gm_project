@@ -293,14 +293,6 @@ let bernstein_sketch = function (p) {
     p.colorMode(p.RGB);
   };
 
-  // p.pascalsTriangle = function (n) {
-  //   let line = [1];
-  //   for (let k = 0; k < n; k++) {
-  //     line.push(line[k] * (n - k) / (k + 1));
-  //   }
-  //   return line;
-  // };
-
   p.setup = function () {
     let bernsteinCanvas = p.createCanvas(CANVAS_SIZE, CANVAS_SIZE);
     bernsteinCanvas.parent("bernstein-canvas-container");
@@ -309,9 +301,19 @@ let bernstein_sketch = function (p) {
       p.redraw();
     });
 
+    p.select("#button_del").mousePressed(() => {
+      binomial_coefficients = pascalsTriangle(number_of_points);
+      p.redraw();
+    });
+
     binomial_coefficients = pascalsTriangle(number_of_points);
     p.noLoop();
   };
+
+  p.mousePressed = function () {
+    binomial_coefficients = pascalsTriangle(number_of_points);
+    p.redraw();
+  }
 
   p.draw = function () {
     p.background("linen");
