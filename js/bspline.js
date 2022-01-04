@@ -72,7 +72,7 @@ let bspline_sketch = function (p) {
   }
 
   p.clearBSplineCurve = function () {
-    bspline_curve.splice(0);
+    // bspline_curve.splice(0);
     slider.value("0");
     output_t.html(
       "t = " +
