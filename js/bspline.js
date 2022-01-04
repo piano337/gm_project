@@ -58,6 +58,8 @@ let bspline_sketch = function (p) {
     // Adding last row values to arrays 
     KNOTS.push(KNOTS[KNOTS.length-1]);
     MULTIPLICITY.push(0);
+    console.log(KNOTS);
+    console.log(MULTIPLICITY);
   }
 
   // Delete last row in knot table
@@ -69,6 +71,25 @@ let bspline_sketch = function (p) {
       KNOTS.pop();
       MULTIPLICITY.pop();
     }
+  }
+
+  p.saveKnots = function () {
+    // Check if values are correct
+    for(let i = 1; i < KNOTS.length; i++){
+      if(Number(document.getElementById("knot"+i).value) < Number(document.getElementById("knot"+(i-1)).value)){
+        alert("Knots must be monotonic (nondecreasing)!");
+        console.log(KNOTS);
+        console.log(MULTIPLICITY);
+        return;
+      }
+    }
+
+    for(let i = 0; i < KNOTS.length; i++){
+      KNOTS[i] = Number(document.getElementById("knot"+i).value);
+      MULTIPLICITY[i] = Number(document.getElementById("mult"+i).value);
+    }
+    console.log(KNOTS);
+    console.log(MULTIPLICITY);
   }
 
   p.clearBSplineCurve = function () {
@@ -208,6 +229,11 @@ let bspline_sketch = function (p) {
     btn_remove_knot = p.select("#button_remove_knot");
     btn_remove_knot.mousePressed(() => {
       p.removeKnot();
+    });
+
+    btn_save_knots = p.select("#button_save_knots");
+    btn_save_knots.mousePressed(() => {
+      p.saveKnots();
     });
 
     p.select("#button_del").mousePressed(() => {
