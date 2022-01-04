@@ -9,7 +9,7 @@ const CANVAS_WIDTH = 600;
 const CANVAS_HEIGHT = 400;
 const POINT_RADIUS = 5;
 const POINT_DIAMETER = 2 * POINT_RADIUS;
-const STROKE_WEIGHT_BEZIER_CURVE = 2;
+const STROKE_WEIGHT_BSPLINE_CURVE = 2;
 const STROKE_WEIGHT_HELPER_LINES = 1;
 const NUMBER_OF_STEPS = 100;
 const TANGENT_LEN_FACTOR = 0.3;
@@ -17,7 +17,7 @@ const SLIDER_MIN = 0;
 const SLIDER_MAX = 100;
 
 // Color constants
-const COLOR_BEZIER_CURVE = 0; // 0 means 'black'
+const COLOR_BSPLINE_CURVE = 0; // 0 means 'black'
 const COLOR_TANGENT = "#C0C0C0";
 const COLOR_CANVAS = "linen";
 const COLOR_POINTS = "#696969"; // 0 means 'black'
@@ -29,9 +29,8 @@ let output_t = null;
 
 let number_of_points = 0;
 let point_to_move = null;
-let bezier_curve = [];
-let s_prime = [];
 let bspline_curve = [];
+let s_prime = [];
 let bool_adding = false;
 let bool_found = false;
 
@@ -42,7 +41,7 @@ const GRID_SIZE = CANVAS_SIZE / 4;
 
 let binomial_coefficients = null;
 
-let bezier_sketch = function (p) {
+let bspline_sketch = function (p) {
   p.addKnotField = function () {
     let table = document.getElementById("knot-table");
     let lastRowNum = table.rows.length
@@ -72,8 +71,8 @@ let bezier_sketch = function (p) {
     }
   }
 
-  p.clearBezierCurve = function () {
-    bezier_curve.splice(0);
+  p.clearBSplineCurve = function () {
+    bspline_curve.splice(0);
     slider.value("0");
     output_t.html(
       "t = " +
@@ -172,8 +171,8 @@ let bezier_sketch = function (p) {
   };
   // Setting up the canvas, the buttons and the slider.
   p.setup = function () {
-    let bezierCanvas = p.createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-    bezierCanvas.parent("bezier-canvas-container");
+    let bsplineCanvas = p.createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+    bsplineCanvas.parent("bspline-canvas-container");
 
     p.addPoint(100, 130);
     p.addPoint(230, 120);
@@ -215,7 +214,7 @@ let bezier_sketch = function (p) {
       if (number_of_points > 2) {
         number_of_points--;
         POINTS.pop();
-        p.clearBezierCurve();
+        p.clearBSplineCurve();
       }
     });
     p.BoorAlgorithm();
@@ -239,14 +238,14 @@ let bezier_sketch = function (p) {
   };
 
   // Catching mouse pressed events:
-  // If "ADD" button was pressed before, set a new point and clear the Bézier curve,
+  // If "ADD" button was pressed before, set a new point and clear the curve,
   // else go for moving a point, i.e. mouse drag event.
   p.mousePressed = function () {
     if (bool_adding) {
       if (p.mouseX <= CANVAS_WIDTH && p.mouseY <= CANVAS_HEIGHT) {
         p.addPoint(p.mouseX, p.mouseY);
         bool_adding = false;
-        p.clearBezierCurve();
+        p.clearBSplineCurve();
         btn_add.removeAttribute("style");
         p.BoorAlgorithm();
       }
@@ -260,7 +259,7 @@ let bezier_sketch = function (p) {
         }
       }
       if (bool_found) {
-        p.clearBezierCurve();
+        p.clearBSplineCurve();
       }
       p.BoorAlgorithm();
     }
@@ -274,7 +273,7 @@ let bezier_sketch = function (p) {
         point_to_move.set(p.mouseX, p.mouseY);
       }
       if (bool_found) {
-        p.clearBezierCurve();
+        p.clearBSplineCurve();
       }
     }
     p.redraw();
@@ -301,7 +300,7 @@ let bezier_sketch = function (p) {
     }
 
     // Draw control polygon
-    p.stroke(COLOR_BEZIER_CURVE);
+    p.stroke(COLOR_BSPLINE_CURVE);
     p.noFill();
     p.beginShape();
     for (const point of POINTS) {
@@ -309,9 +308,9 @@ let bezier_sketch = function (p) {
     }
     p.endShape();
 
-    // Draw Bézier curve
-    p.stroke(COLOR_BEZIER_CURVE);
-    p.strokeWeight(STROKE_WEIGHT_BEZIER_CURVE);
+    // Draw B-Spline curve
+    p.stroke(COLOR_BSPLINE_CURVE);
+    p.strokeWeight(STROKE_WEIGHT_BSPLINE_CURVE);
     p.noFill();
     p.beginShape();
     for (let i = 0; i <= bspline_curve.length-1; i++) {
@@ -427,5 +426,5 @@ let bernstein_sketch = function (p) {
 
 ///////
 
-let bezier_p5 = new p5(bezier_sketch);
+let bspline_p5 = new p5(bspline_sketch);
 let bernstein_p5 = new p5(bernstein_sketch);
