@@ -215,23 +215,29 @@ let bspline_sketch = function (p) {
       );
     });
 
+    const input_degree = p.select("#input_degree");
+    input_degree.input(() => {
+      BSPLINE_DEGREE = Number(input_degree.value());
+      console.log(BSPLINE_DEGREE);
+    });
+
     btn_add = p.select("#button_add");
     btn_add.mousePressed(() => {
       bool_adding = true;
       btn_add.style("background-color", "#999");
     });
 
-    btn_add_knot = p.select("#button_add_knot");
+    const btn_add_knot = p.select("#button_add_knot");
     btn_add_knot.mousePressed(() => {
       p.addKnotField();
     });
 
-    btn_remove_knot = p.select("#button_remove_knot");
+    const btn_remove_knot = p.select("#button_remove_knot");
     btn_remove_knot.mousePressed(() => {
       p.removeKnot();
     });
 
-    btn_save_knots = p.select("#button_save_knots");
+    const btn_save_knots = p.select("#button_save_knots");
     btn_save_knots.mousePressed(() => {
       p.saveKnots();
     });
