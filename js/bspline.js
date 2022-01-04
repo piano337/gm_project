@@ -58,8 +58,6 @@ let bspline_sketch = function (p) {
     // Adding last row values to arrays 
     KNOTS.push(KNOTS[KNOTS.length-1]);
     MULTIPLICITY.push(0);
-    console.log(KNOTS);
-    console.log(MULTIPLICITY);
   }
 
   // Delete last row in knot table
@@ -78,8 +76,6 @@ let bspline_sketch = function (p) {
     for(let i = 1; i < KNOTS.length; i++){
       if(Number(document.getElementById("knot"+i).value) < Number(document.getElementById("knot"+(i-1)).value)){
         alert("Knots must be monotonic (nondecreasing)!");
-        console.log(KNOTS);
-        console.log(MULTIPLICITY);
         return;
       }
     }
@@ -88,8 +84,6 @@ let bspline_sketch = function (p) {
       KNOTS[i] = Number(document.getElementById("knot"+i).value);
       MULTIPLICITY[i] = Number(document.getElementById("mult"+i).value);
     }
-    console.log(KNOTS);
-    console.log(MULTIPLICITY);
   }
 
   p.clearBSplineCurve = function () {
@@ -224,7 +218,6 @@ let bspline_sketch = function (p) {
       } else {
         BSPLINE_DEGREE = degree;
       }
-      console.log(BSPLINE_DEGREE);
     });
 
     btn_add = p.select("#button_add");
@@ -368,8 +361,8 @@ function pascalsTriangle(n) {
   return line;
 }
 
-////// BERNSTEIN POLYNOMIALS
-let bernstein_sketch = function (p) {
+////// BASIS FUNCTIONS
+let basis_functions_sketch = function (p) {
   let color_hue = 0;
   p.addPoint = function () {
     p.colorMode(p.HSB);
@@ -378,17 +371,9 @@ let bernstein_sketch = function (p) {
     p.colorMode(p.RGB);
   };
 
-  // p.pascalsTriangle = function (n) {
-  //   let line = [1];
-  //   for (let k = 0; k < n; k++) {
-  //     line.push(line[k] * (n - k) / (k + 1));
-  //   }
-  //   return line;
-  // };
-
   p.setup = function () {
-    let bernsteinCanvas = p.createCanvas(CANVAS_SIZE, CANVAS_SIZE);
-    bernsteinCanvas.parent("bernstein-canvas-container");
+    let basisFunctionsCanvas = p.createCanvas(CANVAS_SIZE, CANVAS_SIZE);
+    basisFunctionsCanvas.parent("basis-functions-canvas-container");
     slider = p.select("#slider_t_value");
     slider.input(() => {
       p.redraw();
@@ -445,9 +430,9 @@ let bernstein_sketch = function (p) {
       p.stroke(GRAPH_COLORS[j]);
       p.beginShape();
       for (let i = 0; i <= NUMBER_OF_STEPS; i++) {
-        let x = i * (CANVAS_SIZE / NUMBER_OF_STEPS);
-        let f_x = p.bernstein(n, j, x);
-        let y = -1 * f_x * (1 / Math.pow(CANVAS_SIZE, n - 1));
+        const x = i * (CANVAS_SIZE / NUMBER_OF_STEPS);
+        const f_x = p.bernstein(n, j, x);
+        const y = -1 * f_x * (1 / Math.pow(CANVAS_SIZE, n - 1));
         p.vertex(x, y);
 
         // Set points for slider value (t parameter)
@@ -465,4 +450,4 @@ let bernstein_sketch = function (p) {
 ///////
 
 let bspline_p5 = new p5(bspline_sketch);
-let bernstein_p5 = new p5(bernstein_sketch);
+let basis_functions_p5 = new p5(basis_functions_sketch);
