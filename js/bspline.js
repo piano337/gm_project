@@ -217,7 +217,13 @@ let bspline_sketch = function (p) {
 
     const input_degree = p.select("#input_degree");
     input_degree.input(() => {
-      BSPLINE_DEGREE = Number(input_degree.value());
+      let degree = Number(input_degree.value());
+      if(POINTS.length < degree + 1){
+        alert("At least (Degree + 1) control points needed!")
+        document.getElementById("input_degree").value = BSPLINE_DEGREE;
+      } else {
+        BSPLINE_DEGREE = degree;
+      }
       console.log(BSPLINE_DEGREE);
     });
 
