@@ -39,8 +39,6 @@ let bool_found = false;
 const CANVAS_SIZE = 500;
 const GRID_SIZE = CANVAS_SIZE / 4;
 
-let binomial_coefficients = null;
-
 let bspline_sketch = function (p) {
   p.addKnotField = function () {
     let table = document.getElementById("knot-table");
@@ -181,7 +179,6 @@ let bspline_sketch = function (p) {
       COLORS.push(p.color(color_hue % 360, 100, 100));
       color_hue += 20;
       p.colorMode(p.HSB);
-      binomial_coefficients = pascalsTriangle(number_of_points);
     }
   };
   // Setting up the canvas, the buttons and the slider.
@@ -353,14 +350,6 @@ let bspline_sketch = function (p) {
   };
 };
 
-function pascalsTriangle(n) {
-  let line = [1];
-  for (let k = 0; k < n; k++) {
-    line.push((line[k] * (n - k)) / (k + 1));
-  }
-  return line;
-}
-
 ////// BASIS FUNCTIONS
 let basis_functions_sketch = function (p) {
   let color_hue = 0;
@@ -378,8 +367,6 @@ let basis_functions_sketch = function (p) {
     slider.input(() => {
       p.redraw();
     });
-
-    binomial_coefficients = pascalsTriangle(number_of_points);
     p.noLoop();
   };
 
@@ -389,11 +376,6 @@ let basis_functions_sketch = function (p) {
     for (let i = 0; i <= number_of_points; i++) p.addPoint();
     p.functionPlot(number_of_points);
     p.graphAxis();
-  };
-
-  p.bernstein = function (n, j, t) {
-    const coefficient = binomial_coefficients[j];
-    return coefficient * Math.pow(t, j) * Math.pow(CANVAS_SIZE - t, n - j);
   };
 
   p.graphGrid = function () {
@@ -422,6 +404,12 @@ let basis_functions_sketch = function (p) {
     p.line(0, 0, 0, p.height);
   };
 
+  // Cox-de Boor recursion formula //TODO
+  p.basisFunctionsRecursion = function (m, j, u) {
+    const termLeft = (u - KNOTS[j-1])/(KNOTS[j+m-2] - KNOTS[j-1]) * basisFunctionsRecursion(m-1, j, u);
+    const rightTerm = (KNOTS[j+m-1] - u)/(KNOTS[j+m-1] - KNOTS[j]) * basisFunctionsRecursion(m-1, j+1, u);
+  }
+
   p.functionPlot = function (n) {
     p.translate(0, p.height);
     p.strokeWeight(2);
@@ -431,7 +419,7 @@ let basis_functions_sketch = function (p) {
       p.beginShape();
       for (let i = 0; i <= NUMBER_OF_STEPS; i++) {
         const x = i * (CANVAS_SIZE / NUMBER_OF_STEPS);
-        const f_x = p.bernstein(n, j, x);
+        const f_x = j; // TODO
         const y = -1 * f_x * (1 / Math.pow(CANVAS_SIZE, n - 1));
         p.vertex(x, y);
 
