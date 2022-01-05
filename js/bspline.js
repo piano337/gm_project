@@ -415,7 +415,7 @@ let basis_functions_sketch = function (p) {
   p.basisFunction = function (m, j, u) {
     // Simple case for B-Splines of order 1
     if(m == 1){
-      if((KNOTS[j-1] < u) && (u < KNOTS[j])){
+      if((KNOTS[j-1] <= u) && (u < KNOTS[j])){
         return 1;
       } else {
         return 0;
