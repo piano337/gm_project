@@ -1,6 +1,6 @@
 const POINTS = []; //Control points
 let BSPLINE_DEGREE=2;
-let KNOTS = [100,200,300,400,500,600,700];
+let KNOTS = [0,10,20,30,40,50,60];
 let number_of_knots= KNOTS.length;
 let MULTIPLICITY=[0,0,0,0,0,0,0];
 const COLORS = [];
@@ -47,7 +47,7 @@ let bspline_sketch = function (p) {
     let cell0 = row.insertCell(0);
     let cell1 = row.insertCell(1);
     let cell2 = row.insertCell(2);
-    let knotHTML = "<input id=\"knot" + lastRowNum + "\" type=\"number\" value=\"" + KNOTS[KNOTS.length-1] + "\"/></td>";
+    let knotHTML = "<input id=\"knot" + lastRowNum + "\" type=\"number\" min=\"0\" max=\"100\" value=\"" + KNOTS[KNOTS.length-1] + "\"/></td>";
     let multiplicityHTML = "<input id=\"mult" + lastRowNum + "\" type=\"number\" max=\"20\" value=\"0\"/></td>";
     cell0.innerHTML = lastRowNum;
     cell1.innerHTML = knotHTML;
@@ -88,7 +88,7 @@ let bspline_sketch = function (p) {
     // bspline_curve.splice(0);
     slider.value("0");
     output_t.html(
-      "t = " +
+      "u = " +
         (slider.value() / NUMBER_OF_STEPS).toLocaleString(
           undefined, // leave undefined to use the visitor's browser locale or a string like 'en-US' to override it.
           { minimumFractionDigits: 2 }
@@ -193,12 +193,12 @@ let bspline_sketch = function (p) {
 	  p.addPoint(530, 120);
 	  p.addPoint(330, 120);
 
-    output_t = p.select("#t_value");
+    output_t = p.select("#u_value");
 
-    slider = p.select("#slider_t_value");
+    slider = p.select("#slider_u_value");
     slider.input(() => {
       output_t.html(
-        "t = " +
+        "u = " +
           (slider.value() / NUMBER_OF_STEPS).toLocaleString(
             undefined, // leave undefined to use the visitor's browser locale or a string like 'en-US' to override it.
             { minimumFractionDigits: 2 }
@@ -256,7 +256,7 @@ let bspline_sketch = function (p) {
       let cell0 = row.insertCell(0);
       let cell1 = row.insertCell(1);
       let cell2 = row.insertCell(2);
-      let knotHTML = "<input id=\"knot" + lastRowNum + "\" type=\"number\" value=\"" + KNOTS[i] + "\"/></td>";
+      let knotHTML = "<input id=\"knot" + lastRowNum + "\" type=\"number\" min=\"0\" max=\"100\" value=\"" + KNOTS[i] + "\"/></td>";
       let multiplicityHTML = "<input id=\"mult" + lastRowNum + "\" type=\"number\" max=\"20\" value=\"0\"/></td>";
       cell0.innerHTML = lastRowNum;
       cell1.innerHTML = knotHTML;
@@ -363,12 +363,19 @@ let basis_functions_sketch = function (p) {
   p.setup = function () {
     let basisFunctionsCanvas = p.createCanvas(CANVAS_SIZE, CANVAS_SIZE);
     basisFunctionsCanvas.parent("basis-functions-canvas-container");
-    slider = p.select("#slider_t_value");
+    slider = p.select("#slider_u_value");
     slider.input(() => {
+      p.redraw();
+    });
+    p.select("#button_del").mousePressed(() => {
       p.redraw();
     });
     p.noLoop();
   };
+
+  p.mousePressed = function () {
+    p.redraw();
+  }
 
   p.draw = function () {
     p.background("linen");
@@ -408,7 +415,7 @@ let basis_functions_sketch = function (p) {
   p.basisFunction = function (m, j, u) {
     // Simple case for B-Splines of order 1
     if(m == 1){
-      if(KNOTS[j-1] < u && u < KNOTS[j]){
+      if((KNOTS[j-1] < u) && (u < KNOTS[j])){
         return 1;
       } else {
         return 0;
@@ -426,9 +433,9 @@ let basis_functions_sketch = function (p) {
       p.stroke(GRAPH_COLORS[j]);
       p.beginShape();
       for (let i = 0; i <= NUMBER_OF_STEPS; i++) {
-        const x = i * (CANVAS_SIZE / NUMBER_OF_STEPS);
-        const f_x = p.basisFunction(BSPLINE_DEGREE+1, j, x);
-        const y = -1 * f_x * (1 / Math.pow(CANVAS_SIZE, n - 1));
+        const x = i * CANVAS_SIZE/NUMBER_OF_STEPS;
+        const f_x = p.basisFunction(BSPLINE_DEGREE+1, j, i);
+        const y = -1 * f_x * CANVAS_SIZE;
         p.vertex(x, y);
 
         // Set points for slider value (t parameter)
