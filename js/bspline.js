@@ -1,6 +1,6 @@
 const POINTS = []; //Control points
 let BSPLINE_DEGREE=2;
-let KNOTS = [100,200,300,450,480,500,529];
+let KNOTS = [100,200,300,400,500,600,700];
 let number_of_knots= KNOTS.length;
 let MULTIPLICITY=[0,0,0,0,0,0,0];
 const COLORS = [];
@@ -404,10 +404,18 @@ let basis_functions_sketch = function (p) {
     p.line(0, 0, 0, p.height);
   };
 
-  // Cox-de Boor recursion formula //TODO
-  p.basisFunctionsRecursion = function (m, j, u) {
-    const termLeft = (u - KNOTS[j-1])/(KNOTS[j+m-2] - KNOTS[j-1]) * basisFunctionsRecursion(m-1, j, u);
-    const rightTerm = (KNOTS[j+m-1] - u)/(KNOTS[j+m-1] - KNOTS[j]) * basisFunctionsRecursion(m-1, j+1, u);
+  // Cox-de Boor recursion formula
+  p.basisFunction = function (m, j, u) {
+    // Simple case for B-Splines of order 1
+    if(m == 1){
+      if(KNOTS[j-1] < u && u < KNOTS[j]){
+        return 1;
+      } else {
+        return 0;
+      }
+    } else { // … else: use recursion!
+      return (u - KNOTS[j-1])/(KNOTS[j+m-2] - KNOTS[j-1]) * p.basisFunction(m-1, j, u) + (KNOTS[j+m-1] - u)/(KNOTS[j+m-1] - KNOTS[j]) * p.basisFunction(m-1, j+1, u);
+    }
   }
 
   p.functionPlot = function (n) {
@@ -419,7 +427,7 @@ let basis_functions_sketch = function (p) {
       p.beginShape();
       for (let i = 0; i <= NUMBER_OF_STEPS; i++) {
         const x = i * (CANVAS_SIZE / NUMBER_OF_STEPS);
-        const f_x = j; // TODO
+        const f_x = p.basisFunction(BSPLINE_DEGREE+1, j, x);
         const y = -1 * f_x * (1 / Math.pow(CANVAS_SIZE, n - 1));
         p.vertex(x, y);
 
