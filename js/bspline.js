@@ -67,6 +67,7 @@ let bspline_sketch = function (p) {
       KNOTS.pop();
       MULTIPLICITY.pop();
     }
+    p.redraw();
   }
 
   p.saveKnots = function () {
@@ -209,7 +210,7 @@ let bspline_sketch = function (p) {
     const input_degree = p.select("#input_degree");
     input_degree.input(() => {
       let degree = Number(input_degree.value());
-      if(POINTS.length < degree + 1){
+      if(number_of_points < degree + 1){
         alert("At least (Degree + 1) control points needed!")
         document.getElementById("input_degree").value = BSPLINE_DEGREE;
       } else {
@@ -239,11 +240,14 @@ let bspline_sketch = function (p) {
     });
 
     p.select("#button_del").mousePressed(() => {
-      if (number_of_points > 2) {
+      if (number_of_points > BSPLINE_DEGREE + 1) {
         number_of_points--;
         POINTS.pop();
         p.clearBSplineCurve();
+      } else {
+        alert("At least (Degree + 1) control points needed!");
       }
+      p.redraw();
     });
     p.BoorAlgorithm();
     p.noLoop();
