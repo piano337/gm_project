@@ -30,6 +30,8 @@ let output_t = null;
 let number_of_points = 0;
 let point_to_move = null;
 let bspline_curve = [];
+let d = null;
+let alpha= null;
 let s_prime = [];
 let bool_adding = false;
 let bool_found = false;
@@ -93,22 +95,22 @@ let bspline_sketch = function (p) {
     slider.value("0");
     output_t.html(
       "u = " +
-        (slider.value() / NUMBER_OF_STEPS).toLocaleString(
+        ((slider.value()).toLocaleString(
           undefined, // leave undefined to use the visitor's browser locale or a string like 'en-US' to override it.
           { minimumFractionDigits: 2 }
-        )
+        ))
     );
   };
   p.BoorAlgorithm = function(){
   	bspline_curve = [];
-  	let d = null;
-  	let alpha= null;
+  	d = null;
+  	alpha= null;
   	let n = BSPLINE_DEGREE;
   	//We fill d and alpha to operate like algorithm
   	
   	// Algorithm start
   	// u is element of interval [ u_{n-1}, u_{K-n+1}]
-  	for (let u = KNOTS[n-1]; u <= KNOTS[number_of_knots-n]; u++){
+  	for (let u = KNOTS[n-1]; u <= slider.value()*KNOTS[number_of_knots-n]/NUMBER_OF_STEPS; u++){
 
       // 1. Obtaining the interval knots where u is in
   		let I = -1;
@@ -206,7 +208,7 @@ let bspline_sketch = function (p) {
     slider.input(() => {
       output_t.html(
         "u = " +
-          (slider.value() / NUMBER_OF_STEPS).toLocaleString(
+          (KNOTS[BSPLINE_DEGREE-1] + slider.value()*(KNOTS[number_of_knots-BSPLINE_DEGREE] - KNOTS[BSPLINE_DEGREE-1])/NUMBER_OF_STEPS).toLocaleString(
             undefined, // leave undefined to use the visitor's browser locale or a string like 'en-US' to override it.
             { minimumFractionDigits: 2 }
           )
@@ -255,6 +257,7 @@ let bspline_sketch = function (p) {
       }
       p.redraw();
     });
+
     p.BoorAlgorithm();
     p.noLoop();
 
@@ -313,6 +316,7 @@ let bspline_sketch = function (p) {
       if (bool_found) {
         p.clearBSplineCurve();
       }
+      p.BoorAlgorithm();
     }
     p.redraw();
   };
@@ -357,6 +361,27 @@ let bspline_sketch = function (p) {
     }
     p.endShape();
     p.strokeWeight(STROKE_WEIGHT_HELPER_LINES);
+
+    //Helper points testing only :)
+    if(d != null){
+	    p.stroke(COLOR_BSPLINE_CURVE);
+    	p.strokeWeight(STROKE_WEIGHT_BSPLINE_CURVE);
+	    p.noFill();
+	    p.beginShape();
+	    for (let j = 0; j <= d.length-1; j++) {
+	    	for (let k = 0; k <= d[j].length-1; k++) {	
+		      
+		      if(k==1){
+		      	let point = d[j][k];
+		      	console.log(point)
+		      	p.vertex(point.x, point.y);
+		      }
+		      
+	    	}	
+	    }
+	    
+	    p.endShape();
+	}
   };
 };
 
