@@ -69,9 +69,7 @@ function init() {
   let zCam = camRadius * Math.sin(angle);
   camera.position.set(xCam, 3, zCam);
   camera.lookAt(scene.position);
-
-
-
+  onWindowResize();
 }
 
 let sphereGeometry = new THREE.SphereGeometry(0.015, 20, 20);
