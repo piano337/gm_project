@@ -1,6 +1,6 @@
 # Geometric Modeling 2021
 
-All project tasks will be hosted on ***<gm-project-hsh-2021.netlify.app>***.  
+All project tasks will be hosted on ***<https://gm-project-hsh-2021.netlify.app>***.  
 Nevertheless, to host the project locally use the included python script by running
 
 ```
