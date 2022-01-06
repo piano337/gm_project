@@ -106,14 +106,14 @@ let bspline_sketch = function (p) {
   	let n = BSPLINE_DEGREE;
   	//We fill d and alpha to operate like algorithm
   	
-  	//Algorithm start
-  	
-  	for (let u = KNOTS[0]; u <= KNOTS[number_of_knots-1]; u=u+1){
-      //Obtaining the interval knots where u is
+  	// Algorithm start
+  	// u is element of interval [ u_{n-1}, u_{K-n+1}]
+  	for (let u = KNOTS[n-1]; u <= KNOTS[number_of_knots-n]; u++){
+
+      // 1. Obtaining the interval knots where u is in
   		let I = -1;
   		for (let i = n-1; i < number_of_knots-n; i++){
   			if(KNOTS[i]<=u && u<KNOTS[i+1]){
-
   				I = i;
   				break;
   			}
@@ -130,7 +130,12 @@ let bspline_sketch = function (p) {
 	  		}
   		}
 
-  		let r = MULTIPLICITY[I];
+
+      // 2. Obtaining relevant control points
+      let r = 0;
+      if(u == KNOTS[I]){
+  		  r = MULTIPLICITY[I];
+      }
   		if(I!=-1){//Valid u
   		//Construction of (d_j-r)^r
   		for (let j = r; j <= n; j++){
