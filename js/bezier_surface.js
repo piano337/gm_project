@@ -1,7 +1,7 @@
 
 import * as THREE from "./three.js/build/three.module.js";
 
-import { OrbitControls } from "./three.js/examples/jsm/controls/OrbitControls.js";
+import { OrbitControls } from "./three.js/OrbitControls.js";
 
 const sampleU = 0.5;
 const sampleW = 0.7;
