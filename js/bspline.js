@@ -56,16 +56,19 @@ let bspline_sketch = function (p) {
     // Adding last row values to arrays 
     KNOTS.push(KNOTS[KNOTS.length-1]);
     MULTIPLICITY.push(0);
+    number_of_knots = KNOTS.length;
+    p.redraw();
   }
 
   // Delete last row in knot table
   p.removeKnot = function () {
-    if(KNOTS.length < (POINTS.length + BSPLINE_DEGREE - 1)){
-      alert('The following equation must apply!:\nNumber of knots = Number of control points + degree - 1\n(Derived from L = K - n + 1)');
+    if(KNOTS.length < (POINTS.length + BSPLINE_DEGREE)){
+      alert('The following equation must apply!:\nNumber of knots = Number of control points + degree + 1\n(Derived from L = K - n + 1)');
     } else {
       document.getElementById("knot-table").deleteRow(-1);
       KNOTS.pop();
       MULTIPLICITY.pop();
+      number_of_knots = KNOTS.length;
     }
     p.redraw();
   }
