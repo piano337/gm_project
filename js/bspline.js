@@ -100,21 +100,27 @@ let bspline_sketch = function (p) {
     );
   };
   p.BoorAlgorithm = function(){
-  	let current_points = POINTS.slice();
-  	bspline_curve.length = 0;
-  	let d = [];
-  	let alpha=[];
+  	bspline_curve = [];
+  	let d = null;
+  	let alpha= null;
   	let n = BSPLINE_DEGREE;
   	//We fill d and alpha to operate like algorithm
   	
   	//Algorithm start
   	
   	for (let u = KNOTS[0]; u <= KNOTS[number_of_knots-1]; u=u+1){
+      //Obtaining the interval knots where u is
   		let I = -1;
+  		for (let i = n-1; i < number_of_knots-n; i++){
+  			if(KNOTS[i]<=u && u<KNOTS[i+1]){
 
-  		d.length = 0;
+  				I = i;
+  				break;
+  			}
+  		}
 
-  		alpha.length = 0;
+  		d = [];
+  		alpha = [];
   		for (let i = 0; i <= n; i++){
 	  		d.push([]);
 	  		alpha.push([]);
@@ -124,19 +130,11 @@ let bspline_sketch = function (p) {
 	  		}
   		}
 
-  		for (let i = 0; i < number_of_knots-1; i++){//Obtaining the interval knots where u is
-  			if(KNOTS[i]<=u && KNOTS[i+1]>u && i>=n-1 && i+1<=number_of_knots-n){
-
-  				I = i;
-  				break;
-  			}
-  		}
-
   		let r = MULTIPLICITY[I];
   		if(I!=-1){//Valid u
   		//Construction of (d_j-r)^r
   		for (let j = r; j <= n; j++){
-  			d[j-r][r]=current_points[I-n+1+j].copy();
+  			d[j-r][r]=POINTS[I-n+1+j].copy();
 
   			
   		}
