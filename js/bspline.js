@@ -48,7 +48,7 @@ let bspline_sketch = function (p) {
     let cell1 = row.insertCell(1);
     let cell2 = row.insertCell(2);
     let knotHTML = "<input id=\"knot" + lastRowNum + "\" type=\"number\" min=\"0\" max=\"100\" value=\"" + KNOTS[KNOTS.length-1] + "\"/></td>";
-    let multiplicityHTML = "<input id=\"mult" + lastRowNum + "\" type=\"number\" max=\"20\" value=\"0\"/></td>";
+    let multiplicityHTML = "<input id=\"mult" + lastRowNum + "\" type=\"number\" min=\"0\" max=\"20\" value=\"0\"/></td>";
     cell0.innerHTML = lastRowNum;
     cell1.innerHTML = knotHTML;
     cell2.innerHTML = multiplicityHTML;
@@ -267,7 +267,7 @@ let bspline_sketch = function (p) {
       let cell1 = row.insertCell(1);
       let cell2 = row.insertCell(2);
       let knotHTML = "<input id=\"knot" + lastRowNum + "\" type=\"number\" min=\"0\" max=\"100\" value=\"" + KNOTS[i] + "\"/></td>";
-      let multiplicityHTML = "<input id=\"mult" + lastRowNum + "\" type=\"number\" max=\"20\" value=\"0\"/></td>";
+      let multiplicityHTML = "<input id=\"mult" + lastRowNum + "\" type=\"number\" min=\"0\" max=\"20\" value=\"0\"/></td>";
       cell0.innerHTML = lastRowNum;
       cell1.innerHTML = knotHTML;
       cell2.innerHTML = multiplicityHTML;
