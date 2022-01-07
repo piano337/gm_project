@@ -322,6 +322,7 @@ let bspline_sketch = function (p) {
 
     // Draw control polygon
     p.stroke(COLOR_BSPLINE_CURVE);
+    p.strokeWeight(1);
     p.noFill();
     p.beginShape();
     for (const point of POINTS) {
@@ -334,12 +335,19 @@ let bspline_sketch = function (p) {
     p.strokeWeight(STROKE_WEIGHT_BSPLINE_CURVE);
     p.noFill();
     p.beginShape();
+    let point = null;
     for (let i = 0; i <= bspline_curve.length-1; i++) {
-      let point = bspline_curve[i];
+      point = bspline_curve[i];
       p.vertex(point.x, point.y);
     }
     p.endShape();
     p.strokeWeight(STROKE_WEIGHT_HELPER_LINES);
+
+    // Draw point on B-Spline-Curve;
+    if(point != null){
+      p.fill(COLOR_BSPLINE_CURVE);
+      p.circle(point.x, point.y, POINT_DIAMETER);
+    }
 
     // Helper lines :)
     if(d != null){
@@ -392,7 +400,7 @@ let basis_functions_sketch = function (p) {
     p.select("#input_degree").input(() => {
       p.redraw();
     });
-    
+
     p.noLoop();
   };
 
