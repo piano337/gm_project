@@ -60,13 +60,9 @@ let bspline_sketch = function (p) {
 
   // Delete last row in knot table
   p.removeKnot = function () {
-    if(KNOTS.length < (POINTS.length + BSPLINE_DEGREE)){
-      alert('The following equation must apply!:\nNumber of knots = Number of control points + degree + 1\n(Derived from L = K - n + 1)');
-    } else {
-      document.getElementById("knot-table").deleteRow(-1);
-      KNOTS.pop();
-      number_of_knots = KNOTS.length;
-    }
+    document.getElementById("knot-table").deleteRow(-1);
+    KNOTS.pop();
+    number_of_knots = KNOTS.length;
     p.redraw();
   }
 
@@ -200,7 +196,7 @@ let bspline_sketch = function (p) {
     slider.input(() => {
       output_t.html(
         "u = " +
-          (KNOTS[BSPLINE_DEGREE-1] + slider.value()*(KNOTS[number_of_knots-BSPLINE_DEGREE] - KNOTS[BSPLINE_DEGREE-1])/NUMBER_OF_STEPS).toLocaleString(
+          (slider.value()*(KNOTS[number_of_knots-BSPLINE_DEGREE])/NUMBER_OF_STEPS).toLocaleString(
             undefined, // leave undefined to use the visitor's browser locale or a string like 'en-US' to override it.
             { minimumFractionDigits: 2 }
           )
@@ -214,7 +210,9 @@ let bspline_sketch = function (p) {
         alert("At least (Degree + 1) control points needed!")
         document.getElementById("input_degree").value = BSPLINE_DEGREE;
       } else {
+        p.addKnotField();
         BSPLINE_DEGREE = degree;
+        p.redraw();
       }
     });
 
@@ -222,16 +220,6 @@ let bspline_sketch = function (p) {
     btn_add.mousePressed(() => {
       bool_adding = true;
       btn_add.style("background-color", "#999");
-    });
-
-    const btn_add_knot = p.select("#button_add_knot");
-    btn_add_knot.mousePressed(() => {
-      p.addKnotField();
-    });
-
-    const btn_remove_knot = p.select("#button_remove_knot");
-    btn_remove_knot.mousePressed(() => {
-      p.removeKnot();
     });
 
     const btn_save_knots = p.select("#button_save_knots");
@@ -278,6 +266,7 @@ let bspline_sketch = function (p) {
         bool_adding = false;
         p.clearBSplineCurve();
         btn_add.removeAttribute("style");
+        p.addKnotField();
         p.BoorAlgorithm();
       }
     } else {
@@ -399,6 +388,11 @@ let basis_functions_sketch = function (p) {
     p.select("#button_del").mousePressed(() => {
       p.redraw();
     });
+
+    p.select("#input_degree").input(() => {
+      p.redraw();
+    });
+    
     p.noLoop();
   };
 
