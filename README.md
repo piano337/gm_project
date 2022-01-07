@@ -1,5 +1,7 @@
 # Geometric Modeling 2021
 
+***Authors**: Juan Montes, Amir H. Ebrahimzadeh*
+
 All project tasks will be hosted on ***<https://gm-project-hsh-2021.netlify.app>***.  
 Nevertheless, to host the project locally use the included python script by running
 
