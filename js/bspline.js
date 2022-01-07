@@ -2,7 +2,6 @@ const POINTS = []; //Control points
 let BSPLINE_DEGREE=2;
 let KNOTS = [0,10,20,30,40,50,60];
 let number_of_knots= KNOTS.length;
-let MULTIPLICITY=[0,0,0,0,0,0,0];
 const COLORS = [];
 const GRAPH_COLORS = [];
 const CANVAS_WIDTH = 600;
@@ -50,14 +49,11 @@ let bspline_sketch = function (p) {
     let cell1 = row.insertCell(1);
     let cell2 = row.insertCell(2);
     let knotHTML = "<input id=\"knot" + lastRowNum + "\" type=\"number\" min=\"0\" max=\"100\" value=\"" + KNOTS[KNOTS.length-1] + "\"/></td>";
-    let multiplicityHTML = "<input id=\"mult" + lastRowNum + "\" type=\"number\" min=\"0\" max=\"20\" value=\"0\"/></td>";
     cell0.innerHTML = lastRowNum;
     cell1.innerHTML = knotHTML;
-    cell2.innerHTML = multiplicityHTML;
 
     // Adding last row values to arrays 
     KNOTS.push(KNOTS[KNOTS.length-1]);
-    MULTIPLICITY.push(0);
     number_of_knots = KNOTS.length;
     p.redraw();
   }
@@ -69,7 +65,6 @@ let bspline_sketch = function (p) {
     } else {
       document.getElementById("knot-table").deleteRow(-1);
       KNOTS.pop();
-      MULTIPLICITY.pop();
       number_of_knots = KNOTS.length;
     }
     p.redraw();
@@ -86,7 +81,6 @@ let bspline_sketch = function (p) {
 
     for(let i = 0; i < KNOTS.length; i++){
       KNOTS[i] = Number(document.getElementById("knot"+i).value);
-      MULTIPLICITY[i] = Number(document.getElementById("mult"+i).value);
     }
   }
 
@@ -135,9 +129,7 @@ let bspline_sketch = function (p) {
 
       // 2. Obtaining relevant control points
       let r = 0;
-      if(u == KNOTS[I]){
-  		  r = MULTIPLICITY[I];
-      }
+
   		if(I!=-1){//Valid u
   		//Construction of (d_j-r)^r
   		for (let j = r; j <= n; j++){
@@ -270,10 +262,8 @@ let bspline_sketch = function (p) {
       let cell1 = row.insertCell(1);
       let cell2 = row.insertCell(2);
       let knotHTML = "<input id=\"knot" + lastRowNum + "\" type=\"number\" min=\"0\" max=\"100\" value=\"" + KNOTS[i] + "\"/></td>";
-      let multiplicityHTML = "<input id=\"mult" + lastRowNum + "\" type=\"number\" min=\"0\" max=\"20\" value=\"0\"/></td>";
       cell0.innerHTML = lastRowNum;
       cell1.innerHTML = knotHTML;
-      cell2.innerHTML = multiplicityHTML;
     }
 
   };
