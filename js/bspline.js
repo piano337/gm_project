@@ -362,26 +362,30 @@ let bspline_sketch = function (p) {
     p.endShape();
     p.strokeWeight(STROKE_WEIGHT_HELPER_LINES);
 
-    //Helper points testing only :)
+    // Helper lines :)
     if(d != null){
-	    p.stroke(COLORS[0]);
-    	p.strokeWeight(STROKE_WEIGHT_BSPLINE_CURVE);
-	    p.noFill();
-	    p.beginShape();
-	    for (let j = 0; j <= d.length-1; j++) {
-	    	for (let k = 0; k <= d[j].length-1; k++) {	
-		      
-		      if(k==1){
-		      	let point = d[j][k];
-		      	console.log(point)
-		      	p.vertex(point.x, point.y);
-		      }
-		      
+	    for (let k = 0; k <= d.length-1; k++) {
+        p.stroke(COLORS[k]);
+        p.strokeWeight(STROKE_WEIGHT_BSPLINE_CURVE);
+        p.noFill();
+        p.beginShape();
+	    	for (let j = 0; j <= d[k].length-1; j++) {	
+		      let point = d[j][k];
+		      p.vertex(point.x, point.y);
 	    	}	
+        p.endShape();
 	    }
-	    
-	    p.endShape();
-	}
+
+      // Helper points
+      for (let k = 0; k <= d.length-1; k++) {
+        p.stroke(COLORS[k]);
+	    	for (let j = 0; j <= d[k].length-1; j++) {	
+		      let point = d[j][k];
+          p.fill(COLORS[k]);
+          p.circle(point.x, point.y, POINT_RADIUS);
+	    	}
+	    }
+	  }
   };
 };
 
