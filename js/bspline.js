@@ -364,7 +364,7 @@ let bspline_sketch = function (p) {
 
     //Helper points testing only :)
     if(d != null){
-	    p.stroke(COLOR_BSPLINE_CURVE);
+	    p.stroke(COLORS[0]);
     	p.strokeWeight(STROKE_WEIGHT_BSPLINE_CURVE);
 	    p.noFill();
 	    p.beginShape();
@@ -391,7 +391,7 @@ let basis_functions_sketch = function (p) {
   p.addPoint = function () {
     p.colorMode(p.HSB);
     GRAPH_COLORS.push(p.color(color_hue % 360, 100, 90));
-    color_hue += 30;
+    color_hue += 20;
     p.colorMode(p.RGB);
   };
 
