@@ -461,14 +461,15 @@ let basis_functions_sketch = function (p) {
     for (let j = 0; j <= n; j++) {
       p.stroke(GRAPH_COLORS[j]);
       p.beginShape();
-      for (let i = 0; i <= NUMBER_OF_STEPS; i++) {
-        const x = i * CANVAS_SIZE/NUMBER_OF_STEPS;
+      for (let i = 0; i <= KNOTS[number_of_knots-1]; i++) {
+        const x = i * CANVAS_SIZE/KNOTS[number_of_knots-1];
         const f_x = p.basisFunction(BSPLINE_DEGREE+1, j, i);
         const y = -1 * f_x * CANVAS_SIZE;
         p.vertex(x, y);
 
-        // Set points for slider value (t parameter)
-        if (slider.value() == i) {
+        // Set points for slider value (u parameter)
+        scaled_slider_value = Math.floor((slider.value()/NUMBER_OF_STEPS)*KNOTS[number_of_knots-1]);
+        if (scaled_slider_value == i) {
           p.fill(GRAPH_COLORS[j]);
           p.circle(x, y, POINT_DIAMETER);
           p.noFill();
