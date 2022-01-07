@@ -11,7 +11,7 @@ const POINT_DIAMETER = 2 * POINT_RADIUS;
 const STROKE_WEIGHT_BSPLINE_CURVE = 2;
 const STROKE_WEIGHT_HELPER_LINES = 1;
 const NUMBER_OF_STEPS = 100;
-const TANGENT_LEN_FACTOR = 0.3;
+const TANGENT_LEN_FACTOR = 4.7;
 const SLIDER_MIN = 0;
 const SLIDER_MAX = 100;
 
@@ -31,7 +31,7 @@ let point_to_move = null;
 let bspline_curve = [];
 let d = null;
 let alpha= null;
-let s_prime = [];
+let s_prime = null;
 let bool_adding = false;
 let bool_found = false;
 
@@ -144,7 +144,12 @@ let bspline_sketch = function (p) {
   				d[j][k] = p5.Vector.add(aux,aux2)
   			}
   		}
-  			//s_prime.push((n/u[I+1]-u[I])*(d[1][n-1]-d[0][n-1]));
+
+        // Calculating the derivative
+        const deriv_aux1 = p5.Vector.sub(d[1][n-1], d[0][n-1]);
+        deriv_aux1.mult(n/(KNOTS[I+1]-KNOTS[I]));
+        s_prime = deriv_aux1;
+
 	  		alpha[0][n]=(u-KNOTS[I])/(KNOTS[I+1]-KNOTS[I]);
 	  		
 	  		let aux = d[0][n-1].copy();
@@ -373,6 +378,24 @@ let bspline_sketch = function (p) {
 	    	}
 	    }
 	  }
+
+    // Draw tangent
+    
+    if((point != null) && (s_prime != null)){
+      let tangent_vec = s_prime.copy();
+      tangent_vec.mult(TANGENT_LEN_FACTOR);
+      p.stroke(COLOR_TANGENT);
+      p.strokeWeight(STROKE_WEIGHT_BSPLINE_CURVE);
+      p.noFill();
+      p.beginShape();
+      p.vertex(point.x, point.y);
+      p.vertex(
+        point.x + tangent_vec.x,
+        point.y + tangent_vec.y
+      );
+      p.endShape();
+    }
+
   };
 };
 
